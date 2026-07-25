@@ -1,0 +1,103 @@
+---
+import ArticleCard from "../components/ArticleCard.astro";
+import Pagination from "../components/Pagination.astro";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { CHANNELS } from "../lib/channels";
+import { getPublicPosts } from "../lib/content";
+
+const db = (Astro.locals as any).runtime?.env?.DB || Astro.locals.cfContext?.env?.DB || (Astro.locals as any).env?.DB;
+const posts = await getPublicPosts(db).catch(() => []);
+
+// Hero items
+const featured = posts.find((post) => post.featured) ?? posts[0] ?? {
+  title: "Selamat Datang di AnekaNews",
+  slug: "welcome",
+  excerpt: "Portal berita dan informasi terpercaya seputar olahraga, teknologi, bisnis, dan gaya hidup.",
+  body: "",
+  channel: "Teknologi",
+  tags: [],
+  sources: [],
+  publishedAt: new Date(),
+  author: "Redaksi AnekaNews",
+  readingMinutes: 5,
+  featured: true
+};
+
+const mostRead = posts.slice(0, 5);
+const sideHighlights = posts.filter((p) => p.slug !== featured.slug).slice(0, 2);
+const remainingPosts = posts.filter((p) => p.slug !== featured.slug);
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: "AnekaNews",
+  url: "https://anekanews.com",
+  inLanguage: "id-ID",
+};
+---
+
+<BaseLayout
+  title="AnekaNews - Kabar Hari Ini & Berita Terkini"
+  description="Beragam informasi tepercaya tentang olahraga, teknologi, properti, bisnis, dan gaya hidup."
+  {jsonLd}
+>
+  <!-- Red Gradient Hero Section (kivalinacity.com style) -->
+  <section class="hero-section" id="terbaru">
+    <div class="hero-grid">
+      <!-- Most Read 1-5 (Left Column) -->
+      <div class="most-read-col">
+        <div class="most-read-header">
+          <h2>TERPOPULER</h2>
+        </div>
+        {mostRead.map((post, idx) => (
+          <ArticleCard post={post} variant="most-read" rank={idx + 1} />
+        ))}
+      </div>
+
+      <!-- Main Featured Story (Center Column) -->
+      <div>
+        <ArticleCard post={featured} variant="featured-main" />
+      </div>
+
+      <!-- Side Highlights (Right Column) -->
+      <div class="side-highlights-col">
+        {sideHighlights.map((post) => (
+          <ArticleCard post={post} variant="featured-side" />
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Category Block Sections -->
+  {CHANNELS.map((channel) => {
+    const channelPosts = remainingPosts.filter(
+      (p) => p.channel.toLowerCase() === channel.name.toLowerCase() || p.channel.toLowerCase() === channel.slug.toLowerCase()
+    );
+    const topHorizontal = channelPosts[0] || remainingPosts[0];
+    const gridItems = (channelPosts.length > 1 ? channelPosts.slice(1, 4) : remainingPosts.slice(1, 4));
+
+    return (
+      <section class="category-section" id={channel.slug}>
+        <div class="category-section-header">
+          <h2>
+            <a href={`/kategori/${channel.slug}`}>{channel.name}</a>
+            <span>›</span>
+          </h2>
+        </div>
+
+        {topHorizontal && (
+          <ArticleCard post={topHorizontal} variant="horizontal" />
+        )}
+
+        <div class="grid-3col">
+          {gridItems.map((post) => (
+            <ArticleCard post={post} variant="grid" />
+          ))}
+        </div>
+      </section>
+    );
+  })}
+
+  <!-- Content Pagination Navigation -->
+  <Pagination currentPage={1} totalPages={3} baseUrl="" />
+</BaseLayout>

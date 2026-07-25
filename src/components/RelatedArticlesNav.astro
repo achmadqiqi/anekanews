@@ -1,0 +1,58 @@
+---
+import ArticleCard from "./ArticleCard.astro";
+import type { PublicPost } from "../lib/content";
+
+interface Props {
+  currentPost: PublicPost;
+  allPosts: PublicPost[];
+}
+
+const { currentPost, allPosts } = Astro.props;
+
+const otherPosts = allPosts.filter((p) => p.slug !== currentPost.slug);
+const relatedPosts = otherPosts
+  .filter((p) => p.channel === currentPost.channel)
+  .concat(otherPosts)
+  .slice(0, 3);
+
+const currentIndex = allPosts.findIndex((p) => p.slug === currentPost.slug);
+const prevPost = currentIndex > 0 ? allPosts[currentIndex - 1] : undefined;
+const nextPost = currentIndex >= 0 && currentIndex < allPosts.length - 1 ? allPosts[currentIndex + 1] : undefined;
+---
+
+<div class="article-navigation-section">
+  <!-- Prev / Next Article Switcher -->
+  <div class="article-switcher">
+    {prevPost ? (
+      <a href={`/artikel/${prevPost.slug}`} class="switcher-card prev">
+        <span class="switcher-dir">« Artikel Sebelumnya</span>
+        <span class="switcher-title">{prevPost.title}</span>
+      </a>
+    ) : (
+      <div class="switcher-placeholder"></div>
+    )}
+
+    {nextPost ? (
+      <a href={`/artikel/${nextPost.slug}`} class="switcher-card next">
+        <span class="switcher-dir">Artikel Selanjutnya »</span>
+        <span class="switcher-title">{nextPost.title}</span>
+      </a>
+    ) : (
+      <div class="switcher-placeholder"></div>
+    )}
+  </div>
+
+  <!-- Related Content Block -->
+  {relatedPosts.length > 0 && (
+    <div class="related-content-block">
+      <div class="category-section-header">
+        <h2>Rekomendasi Berita Terkait <span>›</span></h2>
+      </div>
+      <div class="grid-3col">
+        {relatedPosts.map((post) => (
+          <ArticleCard {post} variant="grid" />
+        ))}
+      </div>
+    </div>
+  )}
+</div>

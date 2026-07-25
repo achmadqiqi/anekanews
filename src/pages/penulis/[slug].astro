@@ -1,0 +1,23 @@
+---
+import ArticleCard from "../../components/ArticleCard.astro";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getPublicPosts } from "../../lib/content";
+
+const slug = Astro.params.slug ?? "";
+if (slug !== "redaksi-anekanews") return Astro.redirect("/404");
+const posts = await getPublicPosts(Astro.locals.cfContext?.env?.DB);
+---
+
+<BaseLayout
+  title="Redaksi AnekaNews"
+  description="Artikel yang disusun dan diperiksa oleh Redaksi AnekaNews."
+>
+  <section class="search-page">
+    <span class="section-kicker">Penulis</span>
+    <h1>Redaksi AnekaNews</h1>
+    <p>Tim editorial yang menyajikan informasi praktis dari sumber yang dapat ditelusuri.</p>
+    <div class="card-grid">
+      {posts.map((post) => <ArticleCard {post} />)}
+    </div>
+  </section>
+</BaseLayout>

@@ -1,0 +1,35 @@
+{
+  "name": "anekanews",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "cross-env XDG_CONFIG_HOME=.cache ASTRO_TELEMETRY_DISABLED=1 astro dev",
+    "build": "cross-env XDG_CONFIG_HOME=.cache ASTRO_TELEMETRY_DISABLED=1 astro check && cross-env XDG_CONFIG_HOME=.cache ASTRO_TELEMETRY_DISABLED=1 astro build",
+    "preview": "wrangler dev",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "deploy": "wrangler deploy",
+    "deploy:setup": "node scripts/deploy-cloudflare.mjs"
+  },
+  "dependencies": {
+    "@astrojs/cloudflare": "^13.2.0",
+    "@astrojs/react": "^5.0.0",
+    "@emdash-cms/auth-atproto": "^0.2.30",
+    "@emdash-cms/cloudflare": "^0.31.0",
+    "astro": "^6.4.8",
+    "emdash": "^0.31.0",
+    "kysely": "^0.28.8",
+    "pg": "^8.16.3",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.6",
+    "@cloudflare/workers-types": "^5.20260724.1",
+    "cross-env": "^10.1.0",
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.17",
+    "wrangler": "^4.83.0"
+  }
+}

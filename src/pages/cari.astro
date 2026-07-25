@@ -1,0 +1,28 @@
+---
+import ArticleCard from "../components/ArticleCard.astro";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { DEMO_POSTS } from "../lib/content";
+
+const query = (Astro.url.searchParams.get("q") ?? "").trim();
+const safeQuery = query.slice(0, 80);
+const results = safeQuery.length >= 2
+  ? DEMO_POSTS.filter((post) =>
+      `${post.title} ${post.excerpt}`.toLocaleLowerCase("id-ID").includes(
+        safeQuery.toLocaleLowerCase("id-ID"),
+      ),
+    )
+  : [];
+---
+
+<BaseLayout title="Pencarian" description="Cari artikel AnekaNews.">
+  <section class="search-page">
+    <span class="section-kicker">Pencarian</span>
+    <h1>Temukan informasi yang Anda butuhkan</h1>
+    <form action="/cari" method="get" role="search">
+      <label for="q">Kata kunci</label>
+      <div><input id="q" name="q" value={safeQuery} minlength="2" maxlength="80" required /><button>Cari</button></div>
+    </form>
+    {safeQuery.length >= 2 && <p class="result-count">{results.length} hasil untuk “{safeQuery}”</p>}
+    <div class="card-grid">{results.map((post) => <ArticleCard {post} />)}</div>
+  </section>
+</BaseLayout>

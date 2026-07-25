@@ -1,0 +1,63 @@
+---
+import BaseLayout from "./BaseLayout.astro";
+import Breadcrumb from "../components/Breadcrumb.astro";
+import RelatedArticlesNav from "../components/RelatedArticlesNav.astro";
+import { formatIndonesianDate, getPublicPosts, type PublicPost } from "../lib/content";
+import { getChannel } from "../lib/channels";
+
+interface Props {
+  post: PublicPost;
+}
+
+const { post } = Astro.props;
+const channel = getChannel(post.channel);
+const allPosts = await getPublicPosts(Astro.locals.cfContext?.env?.DB).catch(() => []);
+
+const articleJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  headline: post.title,
+  description: post.excerpt,
+  datePublished: post.publishedAt.toISOString(),
+  dateModified: post.publishedAt.toISOString(),
+  author: { "@type": "Organization", name: post.author },
+  publisher: { "@type": "Organization", name: "AnekaNews", url: "https://anekanews.com" },
+  mainEntityOfPage: new URL(`/artikel/${post.slug}`, Astro.site),
+};
+---
+
+<BaseLayout title={post.title} description={post.excerpt} type="article" jsonLd={articleJsonLd}>
+  <article class="article-page">
+    <!-- Breadcrumb Content Navigation -->
+    <Breadcrumb
+      items={[
+        { label: channel.name, href: `/kategori/${channel.slug}` },
+        { label: post.title },
+      ]}
+    />
+
+    <header class="article-heading">
+      <a class="eyebrow" href={`/kategori/${channel.slug}`}>{channel.name}</a>
+      <h1>{post.title}</h1>
+      <p class="standfirst">{post.excerpt}</p>
+      <div class="byline">
+        <strong>{post.author}</strong>
+        <time datetime={post.publishedAt.toISOString()}>{formatIndonesianDate(post.publishedAt)}</time>
+        <span>{post.readingMinutes} menit baca</span>
+      </div>
+    </header>
+
+    <div class={`article-hero visual-${post.channel}`}><span>{channel.name}</span></div>
+
+    <div class="article-body">
+      {post.body.map((paragraph) => <p>{paragraph}</p>)}
+      <aside>
+        <strong>Catatan Redaksi</strong>
+        <p>Artikel ini disusun sebagai informasi umum. Verifikasi kebutuhan dan kondisi Anda sebelum mengambil keputusan teknis atau komersial.</p>
+      </aside>
+    </div>
+
+    <!-- Article Content Switcher & Related Articles Navigation -->
+    <RelatedArticlesNav currentPost={post} {allPosts} />
+  </article>
+</BaseLayout>

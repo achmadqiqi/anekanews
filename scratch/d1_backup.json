@@ -1,0 +1,63 @@
+{
+  "users": [],
+  "options": [
+    {
+      "name": "byline_fields_version",
+      "value": "0"
+    },
+    {
+      "name": "emdash:exclusive_hook:comment:moderate",
+      "value": "\"emdash-default-comment-moderator\""
+    },
+    {
+      "name": "site:title",
+      "value": "\"AnekaNews\""
+    },
+    {
+      "name": "site:tagline",
+      "value": "\"\""
+    },
+    {
+      "name": "emdash:site_url",
+      "value": "https://anekanews.com"
+    },
+    {
+      "name": "emdash:site_title",
+      "value": "\\AnekaNews\\"
+    }
+  ],
+  "published_articles": [
+    {
+      "slug": "kecepatan-infrastruktur-cloud-media-digital-2026",
+      "title": "Mengapa Kecepatan dan Efisiensi Infrastruktur Cloud Menjadi Kunci Utama Media Digital 2026",
+      "excerpt": "Perkembangan teknologi komputasi awan dan jaringan tepi (edge network) mentransformasi cara portal berita menyajikan informasi terkini secara instan kepada jutaan pembaca.",
+      "body": "[\"Di era transformasi digital saat ini, kecepatan akses informasi menjadi salah satu tolok ukur utama keberhasilan portal media online. Pembaca menginginkan pemuatan halaman yang responsif tanpa jeda waktu tunggu yang lama.\",\"Infrastruktur modern seperti Cloudflare Workers dan database terdistribusi berbasis edge memberikan terobosan besar bagi publisher berita. Dengan mengeksekusi logika aplikasi langsung di lokasi server terdekat dari lokasi pengunjung, latensi pengiriman konten dapat dipangkas secara drastis.\",\"Selain faktor performa dan latensi rendah, adopsi teknologi edge computing juga memperkuat sistem keamanan web dari serangan siber seperti DDoS. Hasilnya, portal berita tidak hanya mampu menyajikan berita secara kilat, tetapi juga menjaga ketersediaan sistem selama 24 jam penuh tanpa gangguan.\"]",
+      "channel": "teknologi",
+      "tags_json": "[\"Teknologi\",\"Cloud Computing\",\"Media Digital\"]",
+      "sources_json": "[\"https://www.komdigi.go.id/\"]",
+      "author": "Redaksi AnekaNews",
+      "published_at": "2026-07-24 14:08:44",
+      "created_at": "2026-07-24 14:08:44"
+    }
+  ],
+  "auth_tokens": [],
+  "auth_challenges": [
+    {
+      "challenge": "0Wy2cl2qSvg1YaP8cVUta38Mmwq83HnCb-H7oHlT8Bc",
+      "type": "authentication",
+      "user_id": null,
+      "data": null,
+      "expires_at": "2026-07-25T01:03:21.760Z",
+      "created_at": "2026-07-25 00:58:21"
+    },
+    {
+      "challenge": "ohxiwsfEq73ecQdM6BaqJSQTM4Vn3qB5gdK3xNvo1y4",
+      "type": "authentication",
+      "user_id": null,
+      "data": null,
+      "expires_at": "2026-07-25T01:06:23.873Z",
+      "created_at": "2026-07-25 01:01:23"
+    }
+  ],
+  "taxonomies": []
+}

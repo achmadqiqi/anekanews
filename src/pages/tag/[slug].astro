@@ -1,0 +1,29 @@
+---
+import ArticleCard from "../../components/ArticleCard.astro";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getPublicPosts } from "../../lib/content";
+
+const slug = Astro.params.slug ?? "";
+const label = slug.replaceAll("-", " ");
+const posts = (await getPublicPosts(Astro.locals.cfContext?.env?.DB)).filter(
+  (post) =>
+    `${post.title} ${post.excerpt}`.toLocaleLowerCase("id-ID").includes(
+      label.toLocaleLowerCase("id-ID"),
+    ),
+);
+---
+
+<BaseLayout
+  title={`Tag: ${label}`}
+  description={`Artikel AnekaNews dengan topik ${label}.`}
+>
+  <section class="search-page">
+    <span class="section-kicker">Tag</span>
+    <h1>{label}</h1>
+    {posts.length > 0 ? (
+      <div class="card-grid">{posts.map((post) => <ArticleCard {post} />)}</div>
+    ) : (
+      <p>Belum ada artikel dalam tag ini.</p>
+    )}
+  </section>
+</BaseLayout>

@@ -1,0 +1,19 @@
+---
+import { CHANNELS } from "../lib/channels";
+---
+
+<div class="category-subnav">
+  <div class="main-container">
+    <div class="category-subnav-inner">
+      <span class="subnav-label">Navigasi Konten:</span>
+      <div class="subnav-links">
+        <a href="/#terbaru" class="subnav-item active">Semua Konten</a>
+        {CHANNELS.map((channel) => (
+          <a href={`/kategori/${channel.slug}`} class="subnav-item">
+            {channel.name}
+          </a>
+        ))}
+      </div>
+    </div>
+  </div>
+</div>

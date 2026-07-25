@@ -1,0 +1,53 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "anekanews",
+  "main": "src/worker.ts",
+  "workers_dev": true,
+  "compatibility_date": "2026-07-24",
+  "compatibility_flags": [
+    "nodejs_compat",
+    "nodejs_compat_populate_process_env"
+  ],
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "anekanews-db",
+      "database_id": "e4f6f6e7-63c4-4c0d-ad37-0ebe7e96ded6"
+    }
+  ],
+
+  "kv_namespaces": [
+    {
+      "binding": "CACHE",
+      "id": "f7c7df2d4504458e83d471c0534a6de7"
+    },
+    {
+      "binding": "SESSION",
+      "id": "7bade6c41efa4b71bb49017fd0d08d75"
+    }
+  ],
+  "send_email": [
+    {
+      "name": "EMAIL"
+    }
+  ],
+  "triggers": {
+    "crons": ["15 1 * * *"]
+  },
+  "routes": [
+    {
+      "pattern": "anekanews.com",
+      "custom_domain": true
+    },
+    {
+      "pattern": "www.anekanews.com",
+      "custom_domain": true
+    }
+  ],
+
+  "vars": {
+    "EMDASH_SITE_URL": "https://anekanews.com",
+    "AI_OVERAGE_ENABLED": "false",
+    "MAX_DAILY_ARTICLES": "1"
+  }
+}

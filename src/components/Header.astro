@@ -1,0 +1,74 @@
+---
+import CategoryNav from "./CategoryNav.astro";
+import { CHANNELS } from "../lib/channels";
+import { getPublicPosts } from "../lib/content";
+
+const posts = await getPublicPosts(Astro.locals.cfContext?.env?.DB).catch(() => []);
+const tickerPosts = posts.slice(0, 8);
+---
+
+<header class="site-header">
+  <div class="header-inner">
+    <a href="/" class="brand-wrapper" aria-label="AnekaNews Beranda">
+      <span class="brand-logo">ANEKA NEWS</span>
+      <span class="brand-tagline">KABAR HARI INI & BERITA TERKINI</span>
+    </a>
+    
+    <nav class="main-nav" aria-label="Navigasi Utama">
+      <a href="/" class="active">Terbaru</a>
+      {
+        CHANNELS.map((channel) => (
+          <a href={`/kategori/${channel.slug}`}>{channel.name}</a>
+        ))
+      }
+    </nav>
+
+    <button id="header-search-toggle" class="header-search-btn" aria-label="Buka Pencarian">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+      </svg>
+    </button>
+  </div>
+
+  <!-- Search Slide Down Panel -->
+  <div id="search-slide-panel" class="search-slide-panel hidden">
+    <form role="search" method="get" action="/cari">
+      <input type="search" name="q" placeholder="Ketik kata kunci pencarian berita..." required />
+      <button type="submit">Cari Berita</button>
+    </form>
+  </div>
+
+  <!-- Breaking News Ticker -->
+  {tickerPosts.length > 0 && (
+    <div class="ticker-banner">
+      <div class="main-container">
+        <div class="ticker-inner">
+          <div class="ticker-label">BREAKING NEWS</div>
+          <div class="ticker-marquee-wrapper">
+            <div class="ticker-marquee">
+              {tickerPosts.concat(tickerPosts).map((post) => (
+                <a href={`/artikel/${post.slug}`} class="ticker-item">
+                  <span>•</span>
+                  <span>{post.title}</span>
+                </a>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  )}
+
+  <!-- Quick Category Content Navigation Bar -->
+  <CategoryNav />
+</header>
+
+<script>
+  const toggleBtn = document.getElementById("header-search-toggle");
+  const searchPanel = document.getElementById("search-slide-panel");
+  if (toggleBtn && searchPanel) {
+    toggleBtn.addEventListener("click", () => {
+      searchPanel.classList.toggle("hidden");
+    });
+  }
+</script>

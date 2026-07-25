@@ -1,0 +1,90 @@
+---
+import type { PublicPost } from "../lib/content";
+
+interface Props {
+  post: PublicPost;
+  variant?: "featured-main" | "featured-side" | "horizontal" | "grid" | "most-read";
+  rank?: number;
+}
+
+const { post, variant = "grid", rank = 1 } = Astro.props;
+
+function getChannelColor(channel: string): string {
+  switch (channel.toLowerCase()) {
+    case "olahraga": return "linear-gradient(135deg, #8d1212, #e4502f)";
+    case "teknologi": return "linear-gradient(135deg, #14245f, #2c73da)";
+    case "rumah-properti":
+    case "properti": return "linear-gradient(135deg, #07525d, #17a1a1)";
+    case "bisnis": return "linear-gradient(135deg, #66420a, #d28a18)";
+    case "gaya-hidup": return "linear-gradient(135deg, #55307b, #a0549c)";
+    default: return "linear-gradient(135deg, #AF000F, #580006)";
+  }
+}
+
+const gradientBg = getChannelColor(post.channel);
+const formattedDate = new Date(post.publishedAt).toLocaleDateString("id-ID", {
+  day: "numeric",
+  month: "short",
+  year: "numeric"
+});
+---
+
+{variant === "most-read" && (
+  <article class="most-read-item">
+    <span class="badge-num">{rank}</span>
+    <div class="most-read-avatar" style={`background: ${gradientBg};`}></div>
+    <div class="most-read-copy">
+      <span class="most-read-category">{post.channel}</span>
+      <a href={`/artikel/${post.slug}`} class="most-read-title">
+        {post.title}
+      </a>
+    </div>
+  </article>
+)}
+
+{variant === "featured-main" && (
+  <article class="hero-main-card">
+    <a href={`/artikel/${post.slug}`} class="hero-visual-wrap" style={`background: ${gradientBg};`}>
+      <span class="hero-pill-badge">{post.channel}</span>
+    </a>
+    <a href={`/artikel/${post.slug}`}>
+      <h2 class="hero-main-title">{post.title}</h2>
+    </a>
+    <p class="hero-main-excerpt">{post.excerpt}</p>
+  </article>
+)}
+
+{variant === "featured-side" && (
+  <article class="side-card">
+    <a href={`/artikel/${post.slug}`} class="side-visual-wrap" style={`background: ${gradientBg};`}>
+      <span class="side-pill-badge">{post.channel}</span>
+    </a>
+    <a href={`/artikel/${post.slug}`}>
+      <h3 class="side-card-title">{post.title}</h3>
+    </a>
+  </article>
+)}
+
+{variant === "horizontal" && (
+  <article class="horizontal-card">
+    <a href={`/artikel/${post.slug}`} class="horizontal-visual" style={`background: ${gradientBg};`}></a>
+    <div class="horizontal-content">
+      <span class="category-eyebrow">{post.channel}</span>
+      <a href={`/artikel/${post.slug}`}>
+        <h3 class="horizontal-title">{post.title}</h3>
+      </a>
+      <p class="horizontal-excerpt">{post.excerpt}</p>
+    </div>
+  </article>
+)}
+
+{variant === "grid" && (
+  <article class="grid-card">
+    <a href={`/artikel/${post.slug}`} class="grid-visual-wrap" style={`background: ${gradientBg};`}></a>
+    <span class="category-eyebrow">{post.channel}</span>
+    <a href={`/artikel/${post.slug}`}>
+      <h3 class="grid-card-title">{post.title}</h3>
+    </a>
+    <div class="card-meta">{formattedDate}</div>
+  </article>
+)}

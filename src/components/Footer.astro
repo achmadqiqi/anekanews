@@ -1,0 +1,38 @@
+---
+import { CHANNELS } from "../lib/channels";
+---
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-grid">
+      <div>
+        <a class="footer-brand" href="/">ANEKA<span>NEWS</span></a>
+        <p class="footer-desc">
+          Portal berita independen menyajikan kabar terpercaya seputar olahraga, teknologi, properti, bisnis, dan gaya hidup.
+        </p>
+      </div>
+      <div class="footer-col">
+        <h3>Kanal Berita</h3>
+        <ul>
+          {CHANNELS.map((channel) => (
+            <li><a href={`/kategori/${channel.slug}`}>{channel.name}</a></li>
+          ))}
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h3>Informasi & Redaksi</h3>
+        <ul>
+          <li><a href="/tentang">Tentang Kami</a></li>
+          <li><a href="/kontak">Kontak Redaksi</a></li>
+          <li><a href="/pedoman-media">Pedoman Media Siber</a></li>
+          <li><a href="/kebijakan-privasi">Kebijakan Privasi</a></li>
+          <li><a href="/disclaimer">Disclaimer</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© {new Date().getFullYear()} AnekaNews. Kabar Hari Ini & Berita Terkini. Hak Cipta Dilindungi.</p>
+      <p><a href="/rss.xml">RSS Feed</a> • <a href="/sitemap.xml">Sitemap</a></p>
+    </div>
+  </div>
+</footer>

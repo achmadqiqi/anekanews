@@ -1,0 +1,59 @@
+---
+const { locals, session, redirect } = Astro;
+const env = (locals as any)?.runtime?.env || (locals as any)?.cfContext?.env || (locals as any)?.env;
+const db = (locals as any)?.emdash?.db || env?.DB;
+
+let dbStatus = "No DB";
+let userStatus = "No User";
+
+if (db) {
+  try {
+    const now = new Date().toISOString();
+
+    // 1. Delete setup_state option if present
+    await db.prepare(`DELETE FROM options WHERE name = 'emdash:setup_state'`).run();
+
+    // 2. Set setup_complete option to "true" (as JSON string)
+    await db.prepare(
+      `INSERT INTO options (name, value) VALUES ('emdash:setup_complete', '"true"') ON CONFLICT(name) DO UPDATE SET value = '"true"'`
+    ).run();
+
+    await db.prepare(
+      `INSERT INTO options (name, value) VALUES ('emdash:site_title', '"AnekaNews"') ON CONFLICT(name) DO UPDATE SET value = '"AnekaNews"'`
+    ).run();
+
+    dbStatus = "DB Setup Options Inserted";
+
+    // 3. Insert Super Admin User
+    const userId = "01KYBDJVCGG10WZ54KEDB2CWK7";
+    await db.prepare(
+      `INSERT INTO users (id, email, name, role, email_verified, created_at, updated_at) VALUES (?, ?, ?, 50, 1, ?, ?) ON CONFLICT(email) DO UPDATE SET role = 50, name = ?`
+    ).bind(userId, "achmadqiqi888@gmail.com", "Achmad Baihaqi", now, now, "Achmad Baihaqi").run();
+
+    userStatus = "Super Admin User Created/Updated";
+
+    // 4. Set Astro Session
+    if (session) {
+      session.set("user", { id: userId });
+    }
+  } catch (err: any) {
+    console.error("Quick login execution error:", err);
+    dbStatus = "Error: " + (err?.message || String(err));
+  }
+}
+---
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Masuk ke Admin AnekaNews...</title>
+  <meta http-equiv="refresh" content="0;url=/_emdash/admin">
+</head>
+<body style="font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; background: #0f172a; color: white;">
+  <h2 style="margin-bottom: 0.5rem;">Sesi Admin AnekaNews Siap!</h2>
+  <p style="color: #38bdf8;">DB Status: {dbStatus}</p>
+  <p style="color: #38bdf8;">User Status: {userStatus}</p>
+  <a href="/_emdash/admin" style="margin-top: 1.5rem; background: #2563eb; color: white; padding: 0.75rem 1.5rem; border-radius: 0.5rem; text-decoration: none; font-weight: bold;">Buka Dashboard Admin</a>
+</body>
+</html>

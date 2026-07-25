@@ -1,0 +1,13 @@
+---
+import ArticleLayout from "../../layouts/ArticleLayout.astro";
+import { getPublicPost } from "../../lib/content";
+
+const db = (Astro.locals as any).runtime?.env?.DB || Astro.locals.cfContext?.env?.DB || (Astro.locals as any).env?.DB;
+const post = await getPublicPost(
+  Astro.params.slug ?? "",
+  db,
+);
+if (!post) return Astro.redirect("/404");
+---
+
+<ArticleLayout {post} />

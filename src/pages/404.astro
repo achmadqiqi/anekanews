@@ -1,0 +1,7 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+Astro.response.status = 404;
+---
+<BaseLayout title="Halaman Tidak Ditemukan" description="Halaman yang Anda cari tidak tersedia.">
+  <article class="prose-page"><span>404</span><h1>Halaman tidak ditemukan</h1><p>Alamat mungkin berubah atau konten sudah tidak tersedia.</p><p><a class="button" href="/">Kembali ke beranda</a></p></article>
+</BaseLayout>
