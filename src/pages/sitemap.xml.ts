@@ -1,3 +1,4 @@
+import { env } from "cloudflare:workers";
 import type { APIRoute } from "astro";
 import { CHANNELS } from "../lib/channels";
 import { getPublicPosts } from "../lib/content";
@@ -11,8 +12,8 @@ const STATIC_PATHS = [
   "pedoman-media",
 ];
 
-export const GET: APIRoute = async ({ locals }) => {
-  const posts = await getPublicPosts(locals.cfContext?.env?.DB);
+export const GET: APIRoute = async () => {
+  const posts = await getPublicPosts((env as any).DB);
   const urls = [
     ...STATIC_PATHS.map((path) => `https://anekanews.com/${path}`),
     ...CHANNELS.map(

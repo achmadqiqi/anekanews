@@ -1,3 +1,4 @@
+import { env } from "cloudflare:workers";
 import type { APIRoute } from "astro";
 import { getPublicPosts } from "../lib/content";
 
@@ -10,8 +11,8 @@ function escapeXml(value: string): string {
     .replaceAll("'", "&apos;");
 }
 
-export const GET: APIRoute = async ({ locals }) => {
-  const posts = await getPublicPosts(locals.cfContext?.env?.DB);
+export const GET: APIRoute = async () => {
+  const posts = await getPublicPosts((env as any).DB);
   const items = posts
     .map(
       (post) => `<item>

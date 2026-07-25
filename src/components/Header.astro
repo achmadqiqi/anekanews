@@ -1,9 +1,10 @@
 ---
+import { env } from "cloudflare:workers";
 import CategoryNav from "./CategoryNav.astro";
 import { CHANNELS } from "../lib/channels";
 import { getPublicPosts } from "../lib/content";
 
-const posts = await getPublicPosts(Astro.locals.cfContext?.env?.DB).catch(() => []);
+const posts = await getPublicPosts((env as any).DB).catch(() => []);
 const tickerPosts = posts.slice(0, 8);
 ---
 

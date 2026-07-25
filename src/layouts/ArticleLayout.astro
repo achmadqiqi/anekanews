@@ -1,4 +1,5 @@
 ---
+import { env } from "cloudflare:workers";
 import BaseLayout from "./BaseLayout.astro";
 import Breadcrumb from "../components/Breadcrumb.astro";
 import RelatedArticlesNav from "../components/RelatedArticlesNav.astro";
@@ -11,7 +12,7 @@ interface Props {
 
 const { post } = Astro.props;
 const channel = getChannel(post.channel);
-const allPosts = await getPublicPosts(Astro.locals.cfContext?.env?.DB).catch(() => []);
+const allPosts = await getPublicPosts((env as any).DB).catch(() => []);
 
 const articleJsonLd = {
   "@context": "https://schema.org",

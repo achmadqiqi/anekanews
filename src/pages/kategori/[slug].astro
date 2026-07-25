@@ -1,4 +1,5 @@
 ---
+import { env } from "cloudflare:workers";
 import ArticleCard from "../../components/ArticleCard.astro";
 import Breadcrumb from "../../components/Breadcrumb.astro";
 import Pagination from "../../components/Pagination.astro";
@@ -12,8 +13,7 @@ try {
 } catch {
   return Astro.redirect("/404");
 }
-const db = (Astro.locals as any).runtime?.env?.DB || Astro.locals.cfContext?.env?.DB || (Astro.locals as any).env?.DB;
-const posts = await getPublicPosts(db, channel.slug);
+const posts = await getPublicPosts((env as any).DB, channel.slug);
 ---
 
 <BaseLayout title={channel.name} description={channel.description}>

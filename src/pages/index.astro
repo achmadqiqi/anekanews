@@ -1,12 +1,12 @@
 ---
+import { env } from "cloudflare:workers";
 import ArticleCard from "../components/ArticleCard.astro";
 import Pagination from "../components/Pagination.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { CHANNELS } from "../lib/channels";
 import { getPublicPosts } from "../lib/content";
 
-const db = (Astro.locals as any).runtime?.env?.DB || Astro.locals.cfContext?.env?.DB || (Astro.locals as any).env?.DB;
-const posts = await getPublicPosts(db).catch(() => []);
+const posts = await getPublicPosts((env as any).DB).catch(() => []);
 
 // Hero items
 const featured = posts.find((post) => post.featured) ?? posts[0] ?? {

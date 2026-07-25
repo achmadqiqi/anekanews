@@ -1,13 +1,16 @@
 ---
+import { env } from "cloudflare:workers";
 import ArticleLayout from "../../layouts/ArticleLayout.astro";
 import { getPublicPost } from "../../lib/content";
 
-const db = (Astro.locals as any).runtime?.env?.DB || Astro.locals.cfContext?.env?.DB || (Astro.locals as any).env?.DB;
+export const prerender = false;
+
 const post = await getPublicPost(
   Astro.params.slug ?? "",
-  db,
+  (env as any).DB,
 );
 if (!post) return Astro.redirect("/404");
 ---
 
 <ArticleLayout {post} />
+

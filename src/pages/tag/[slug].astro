@@ -1,11 +1,12 @@
 ---
+import { env } from "cloudflare:workers";
 import ArticleCard from "../../components/ArticleCard.astro";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { getPublicPosts } from "../../lib/content";
 
 const slug = Astro.params.slug ?? "";
 const label = slug.replaceAll("-", " ");
-const posts = (await getPublicPosts(Astro.locals.cfContext?.env?.DB)).filter(
+const posts = (await getPublicPosts((env as any).DB)).filter(
   (post) =>
     `${post.title} ${post.excerpt}`.toLocaleLowerCase("id-ID").includes(
       label.toLocaleLowerCase("id-ID"),
