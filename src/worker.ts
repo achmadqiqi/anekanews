@@ -8,10 +8,7 @@ import { D1ArticlePublisher } from "./lib/automation/publisher";
 import { D1JobRepository } from "./lib/automation/repository";
 import { selectDailyTopic } from "./lib/automation/topics";
 
-interface Env {
-  DB: D1Database;
-  SESSION: KVNamespace;
-  CACHE: KVNamespace;
+interface Env extends __BaseEnv_Env {
   ASSETS: Fetcher;
   GEMINI_API_KEY: string;
 }
