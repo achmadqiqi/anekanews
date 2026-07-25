@@ -25,9 +25,10 @@ This specification outlines the setup of Cloudflare R2 bucket, adding bindings t
    - `Access-Control-Allow-Headers: Content-Type`
 5. **Database Migration**:
    - Executes `ALTER TABLE published_articles ADD COLUMN image_url TEXT;` on the D1 database.
-6. **Astro Article Detail Page**:
+6. **Astro Page Updates (Home & Article Detail)**:
    - Fetches `image_url` along with other article columns from D1 in `src/lib/content.ts`.
    - In `src/pages/artikel/[slug].astro` and `src/layouts/ArticleLayout.astro`, if `image_url` is present, renders a lazy-loaded `<img>` tag with appropriate alt text.
+   - In `src/components/ArticleCard.astro` (which is used in Home `src/pages/index.astro` and others), if `post.image_url` is present, renders an `<img>` tag with `loading="lazy"` inside the visual wrappers (`hero-visual-wrap`, `side-visual-wrap`, `horizontal-visual`, `grid-visual-wrap`), maintaining the gradient bg as fallback.
 
 ## Alternatives Evaluated
 
