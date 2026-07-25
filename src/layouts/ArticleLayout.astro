@@ -48,10 +48,34 @@ const articleJsonLd = {
       </div>
     </header>
 
-    <div class={`article-hero visual-${post.channel}`}><span>{channel.name}</span></div>
+    {post.image_url ? (
+      <div class="article-hero">
+        <picture>
+          <source srcset={post.image_url} type="image/webp" />
+          <img src={post.image_url} alt={post.title} fetchpriority="high" />
+        </picture>
+      </div>
+    ) : (
+      <div class={`article-hero visual-${post.channel}`}><span>{channel.name}</span></div>
+    )}
 
     <div class="article-body">
       {post.body.map((paragraph) => <p>{paragraph}</p>)}
+
+      {post.images && post.images.length > 0 && (
+        <div class="article-gallery">
+          {post.images.map((img) => (
+            <figure class="article-gallery-item">
+              <picture>
+                <source srcset={img.image_url} type="image/webp" />
+                <img src={img.image_url} alt={img.alt_text || post.title} loading="lazy" />
+              </picture>
+              {img.alt_text && <figcaption>{img.alt_text}</figcaption>}
+            </figure>
+          ))}
+        </div>
+      )}
+
       <aside>
         <strong>Catatan Redaksi</strong>
         <p>Artikel ini disusun sebagai informasi umum. Verifikasi kebutuhan dan kondisi Anda sebelum mengambil keputusan teknis atau komersial.</p>

@@ -16,6 +16,16 @@
     }
   ],
 
+  // R2 bucket config (uncomment after enabling R2 in Cloudflare dashboard)
+  /*
+  "r2_buckets": [
+    {
+      "binding": "MEDIA",
+      "bucket_name": "anekanews-media"
+    }
+  ],
+  */
+
   "kv_namespaces": [
     {
       "binding": "CACHE",

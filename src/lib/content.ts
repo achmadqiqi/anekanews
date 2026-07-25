@@ -10,6 +10,8 @@ export interface PublicPost {
   readingMinutes: number;
   body: string[];
   featured?: boolean;
+  image_url?: string;
+  images?: { image_url: string; alt_text?: string | null }[];
 }
 
 export const DEMO_POSTS: readonly PublicPost[] = [
@@ -104,6 +106,7 @@ interface ArticleRow {
   channel: string;
   author: string;
   published_at: string;
+  image_url?: string | null;
 }
 
 function parseSafeDate(dateStr: string): Date {
@@ -135,6 +138,7 @@ function rowToPost(row: ArticleRow): PublicPost {
     channel: row.channel,
     author: row.author || "Redaksi AnekaNews",
     publishedAt: parseSafeDate(row.published_at),
+    image_url: row.image_url || undefined,
     readingMinutes: Math.max(
       1,
       Math.ceil((Array.isArray(body) ? body.join(" ") : row.body).trim().split(/\s+/u).length / 200),
@@ -152,13 +156,13 @@ export async function getPublicPosts(
   const query = channel
     ? db
         .prepare(
-          `SELECT slug, title, excerpt, body, channel, author, published_at
+          `SELECT slug, title, excerpt, body, channel, author, published_at, image_url
            FROM published_articles WHERE channel = ?
            ORDER BY published_at DESC LIMIT 50`,
         )
         .bind(channel)
     : db.prepare(
-        `SELECT slug, title, excerpt, body, channel, author, published_at
+        `SELECT slug, title, excerpt, body, channel, author, published_at, image_url
          FROM published_articles ORDER BY published_at DESC LIMIT 50`,
       );
   const result = await query.all<ArticleRow>();
@@ -173,12 +177,30 @@ export async function getPublicPost(
   if (!db) return getPost(slug);
   const row = await db
     .prepare(
-      `SELECT slug, title, excerpt, body, channel, author, published_at
+      `SELECT slug, title, excerpt, body, channel, author, published_at, image_url
        FROM published_articles WHERE slug = ? LIMIT 1`,
     )
     .bind(slug)
     .first<ArticleRow>();
-  return row ? rowToPost(row) : getPost(slug);
+  if (!row) return getPost(slug);
+
+  const post = rowToPost(row);
+
+  try {
+    const imagesResult = await db
+      .prepare(
+        `SELECT image_url, alt_text FROM article_images WHERE slug = ? ORDER BY position ASC`
+      )
+      .bind(slug)
+      .all<{ image_url: string; alt_text: string | null }>();
+    if (imagesResult.results && imagesResult.results.length > 0) {
+      post.images = imagesResult.results;
+    }
+  } catch (error) {
+    console.error("Failed to fetch article_images:", error);
+  }
+
+  return post;
 }
 
 export function formatIndonesianDate(date: Date): string {
