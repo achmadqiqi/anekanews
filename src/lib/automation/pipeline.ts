@@ -85,10 +85,14 @@ export async function advanceNextJob(
             lastError: validation.errors.join("; "),
           });
         } else {
-          await deps.repository.update(job.id, "ready");
+          // AI drafts require human review before publishing by default
+          await deps.repository.update(job.id, "needs_review");
         }
         break;
       }
+      case "needs_review":
+        // Awaiting editorial human review/approval before transitioning to ready/published
+        return { status: "idle" };
       case "ready": {
         const draft = parsePayload(job);
         await deps.publishDraft(draft);

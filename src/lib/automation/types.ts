@@ -3,6 +3,7 @@ export type JobStatus =
   | "researching"
   | "drafting"
   | "validating"
+  | "needs_review"
   | "ready"
   | "published"
   | "deferred"

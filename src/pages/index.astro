@@ -73,8 +73,10 @@ const jsonLd = {
     const channelPosts = remainingPosts.filter(
       (p) => p.channel.toLowerCase() === channel.name.toLowerCase() || p.channel.toLowerCase() === channel.slug.toLowerCase()
     );
-    const topHorizontal = channelPosts[0] || remainingPosts[0];
-    const gridItems = (channelPosts.length > 1 ? channelPosts.slice(1, 4) : remainingPosts.slice(1, 4));
+    if (channelPosts.length === 0) return null;
+
+    const topHorizontal = channelPosts[0];
+    const gridItems = channelPosts.slice(1, 4);
 
     return (
       <section class="category-section" id={channel.slug}>
@@ -89,11 +91,13 @@ const jsonLd = {
           <ArticleCard post={topHorizontal} variant="horizontal" />
         )}
 
-        <div class="grid-3col">
-          {gridItems.map((post) => (
-            <ArticleCard post={post} variant="grid" />
-          ))}
-        </div>
+        {gridItems.length > 0 && (
+          <div class="grid-3col">
+            {gridItems.map((post) => (
+              <ArticleCard post={post} variant="grid" />
+            ))}
+          </div>
+        )}
       </section>
     );
   })}

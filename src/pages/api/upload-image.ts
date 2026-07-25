@@ -66,9 +66,19 @@ export const POST: APIRoute = async (context) => {
       );
     }
 
+    function getExtension(mimeType: string): string {
+      switch (mimeType) {
+        case "image/jpeg": return "jpg";
+        case "image/png": return "png";
+        case "image/webp": return "webp";
+        default: return "webp";
+      }
+    }
+
     const timestamp = Date.now();
     const random6 = Math.random().toString(36).substring(2, 8).padEnd(6, "0");
-    const filename = `${timestamp}-${random6}.webp`;
+    const ext = getExtension(file.type);
+    const filename = `${timestamp}-${random6}.${ext}`;
 
     const arrayBuffer = await file.arrayBuffer();
     await media.put(filename, arrayBuffer, {

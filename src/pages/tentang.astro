@@ -1,6 +1,53 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "AboutPage",
+  name: "Tentang AnekaNews",
+  description: "Mengenal visi, misi, jajaran redaksi, dan prinsip jurnalistik AnekaNews.",
+  url: "https://anekanews.com/tentang",
+};
 ---
-<BaseLayout title="Tentang AnekaNews" description="Mengenal tujuan dan cara kerja redaksi AnekaNews.">
-  <article class="prose-page"><span>Tentang Kami</span><h1>Informasi yang beragam, disajikan dengan lebih jernih</h1><p>AnekaNews adalah media independen berbahasa Indonesia yang membahas olahraga, teknologi, rumah dan properti, bisnis, serta gaya hidup.</p><p>Kami mengutamakan kegunaan bagi pembaca, konteks yang cukup, sumber yang dapat ditelusuri, dan pemisahan yang jelas antara informasi editorial dan kepentingan komersial.</p></article>
+
+<BaseLayout
+  title="Tentang Kami"
+  description="Mengenal tujuan, standar editorial, dan tim pengembang AnekaNews."
+  {jsonLd}
+>
+  <article class="prose-page">
+    <span>Tentang AnekaNews</span>
+    <h1>Informasi Terpercaya untuk Pembuat Keputusan</h1>
+    
+    <p>
+      <strong>AnekaNews</strong> adalah portal media digital independen berbahasa Indonesia yang berfokus menyajikan artikel mendalam, analisis berita, dan panduan praktis seputar Olahraga, Teknologi, Rumah & Properti, Bisnis, serta Gaya Hidup.
+    </p>
+
+    <h2>Visi dan Misi Editorial</h2>
+    <p>
+      Di tengah pesatnya arus informasi digital, AnekaNews hadir untuk memberikan kejernihan. Kami percaya bahwa setiap informasi yang disajikan harus bermanfaat, memiliki konteks yang jelas, dan didukung oleh sumber daya data yang dapat diverifikasi.
+    </p>
+
+    <h2>Prinsip Utama Kami</h2>
+    <ul>
+      <li><strong>Independensi & Ketepatan:</strong> Bebas dari intervensi pihak luar dan mengutamakan ketepatan fakta.</li>
+      <li><strong>Transparansi Sumber:</strong> Mencantumkan referensi primer pada setiap pembahasan faktual dan klaim statistik.</li>
+      <li><strong>Pemisahan Konten Editorial & Komersial:</strong> Setiap bentuk artikel bersponsor atau tautan afiliasi diberi tanda jelas tanpa memengaruhi objektivitas redaksi.</li>
+      <li><strong>Inovasi Digital Beretika:</strong> Memanfaatkan teknologi mutakhir untuk efisiensi riset dengan tetap menempatkan kontrol kualitas manusia sebagai penentu utama.</li>
+    </ul>
+
+    <h2>Cakupan Kanal Utama</h2>
+    <ul>
+      <li><strong>Olahraga:</strong> Panduan fasilitas, infrastruktur olahraga, dan tren gaya hidup aktif.</li>
+      <li><strong>Teknologi:</strong> Perkembangan AI, cloud computing, keamanan siber, dan digitalisasi usaha.</li>
+      <li><strong>Rumah & Properti:</strong> Tren hunian, analisis pasar properti, dan arsitektur bangunan.</li>
+      <li><strong>Bisnis:</strong> Kebijakan KUR, pertumbuhan UMKM, dan panduan keuangan operasional.</li>
+      <li><strong>Gaya Hidup:</strong> Kesehatan mental, produktivitas, dan gaya hidup seimbang.</li>
+    </ul>
+
+    <h2>Struktur Redaksi</h2>
+    <p>
+      Redaksi AnekaNews terdiri dari jurnalis, editor, dan spesialis bidang yang berpengalaman. Kunjungi halaman <a href="/penulis/redaksi-anekanews">Tim Redaksi</a> untuk melihat daftar kontributor dan profil penulis kami.
+    </p>
+  </article>
 </BaseLayout>

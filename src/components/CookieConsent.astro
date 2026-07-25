@@ -1,0 +1,83 @@
+---
+---
+
+<div id="cookie-consent-banner" class="cookie-banner" style="display: none;">
+  <div class="cookie-banner-content">
+    <p>
+      Kami menggunakan cookie teknis dan analitik untuk mengoptimalkan pengalaman membaca Anda di AnekaNews. 
+      Pelajari selengkapnya di <a href="/kebijakan-privasi">Kebijakan Privasi</a> kami.
+    </p>
+    <div class="cookie-banner-actions">
+      <button id="btn-cookie-accept" class="btn-cookie btn-accept">Setujui</button>
+      <button id="btn-cookie-decline" class="btn-cookie btn-decline">Tolak</button>
+    </div>
+  </div>
+</div>
+
+<style>
+  .cookie-banner {
+    position: fixed;
+    bottom: 1rem;
+    left: 1rem;
+    right: 1rem;
+    max-width: 480px;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+    padding: 1.25rem;
+    z-index: 9999;
+  }
+  .cookie-banner-content p {
+    font-size: 0.85rem;
+    color: #374151;
+    line-height: 1.5;
+    margin-bottom: 1rem;
+  }
+  .cookie-banner-content a {
+    color: #14245f;
+    font-weight: 700;
+    text-decoration: underline;
+  }
+  .cookie-banner-actions {
+    display: flex;
+    gap: 0.5rem;
+    justify: flex-end;
+  }
+  .btn-cookie {
+    padding: 0.4rem 1rem;
+    font-size: 0.8rem;
+    font-weight: 700;
+    cursor: pointer;
+    border-radius: 0;
+  }
+  .btn-accept {
+    background-color: #14245f;
+    color: #ffffff;
+    border: none;
+  }
+  .btn-decline {
+    background-color: #f3f4f6;
+    color: #374151;
+    border: 1px solid #d1d5db;
+  }
+</style>
+
+<script is:inline>
+  (function () {
+    const consent = localStorage.getItem("anekanews_cookie_consent");
+    const banner = document.getElementById("cookie-consent-banner");
+    if (!consent && banner) {
+      banner.style.display = "block";
+    }
+
+    document.getElementById("btn-cookie-accept")?.addEventListener("click", function () {
+      localStorage.setItem("anekanews_cookie_consent", "accepted");
+      if (banner) banner.style.display = "none";
+    });
+
+    document.getElementById("btn-cookie-decline")?.addEventListener("click", function () {
+      localStorage.setItem("anekanews_cookie_consent", "declined");
+      if (banner) banner.style.display = "none";
+    });
+  })();
+</script>

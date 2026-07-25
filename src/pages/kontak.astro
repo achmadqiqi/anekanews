@@ -1,6 +1,48 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "ContactPage",
+  name: "Kontak Redaksi AnekaNews",
+  description: "Informasi kontak resmi redaksi, layanan hak jawab, koreksi artikel, dan hubungan kemitraan AnekaNews.",
+  url: "https://anekanews.com/kontak",
+};
 ---
-<BaseLayout title="Kontak" description="Hubungi redaksi AnekaNews.">
-  <article class="prose-page"><span>Kontak</span><h1>Hubungi redaksi AnekaNews</h1><p>Untuk koreksi, masukan, kerja sama editorial, atau pertanyaan lain, silakan menghubungi redaksi melalui alamat email yang akan diumumkan setelah peluncuran resmi.</p><p>Setiap permintaan koreksi akan diperiksa berdasarkan sumber dan bukti yang tersedia.</p></article>
+
+<BaseLayout
+  title="Kontak Redaksi"
+  description="Hubungi redaksi AnekaNews untuk pertanyaan, koreksi berita, masukan, dan kerjasama media."
+  {jsonLd}
+>
+  <article class="prose-page">
+    <span>Kontak Resmi</span>
+    <h1>Hubungi Redaksi AnekaNews</h1>
+    <p>
+      Kami menghargai setiap masukan, kritik membangun, permintaan koreksi faktual, dan penawaran kerjasama dari pembaca maupun mitra industri.
+    </p>
+
+    <h2>Alamat & Kontak Utama</h2>
+    <div style="background: #f9fafb; border: 1px solid #e5e7eb; padding: 1.5rem; margin: 1.5rem 0;">
+      <p style="margin-bottom: 0.75rem;"><strong>Email Redaksi & Informasi:</strong> redaksi@anekanews.com</p>
+      <p style="margin-bottom: 0.75rem;"><strong>Layanan Hak Jawab & Koreksi:</strong> koreksi@anekanews.com</p>
+      <p style="margin-bottom: 0.75rem;"><strong>Kerjasama Iklan & Media Partner:</strong> iklan@anekanews.com</p>
+      <p style="margin-bottom: 0;"><strong>Lokasi Operational:</strong> Jakarta & Surabaya, Indonesia</p>
+    </div>
+
+    <h2>Prosedur Pengajuan Hak Jawab & Koreksi Artikel</h2>
+    <p>
+      Sesuai dengan Kode Etik Jurnalistik dan Pedoman Pemberitaan Media Siber, AnekaNews berkomitmen untuk segera menindaklanjuti kekeliruan data atau klaim dalam artikel yang kami publikasikan.
+    </p>
+    <p>Saat mengirimkan pengajuan koreksi, sertakan informasi berikut:</p>
+    <ul>
+      <li>URL artikel yang dimaksud.</li>
+      <li>Paragraf atau kutipan spesifik yang perlu dikoreksi.</li>
+      <li>Data atau fakta yang benar disertai dengan tautan sumber resmi/primer.</li>
+      <li>Identitas pemohon koreksi atau hak jawab.</li>
+    </ul>
+
+    <h2>Jam Operasional Redaksi</h2>
+    <p>Tim editorial AnekaNews memproses permohonan koreksi dan tanggapan media pada hari Kerja (Senin – Jumat, pukul 08:00 – 17:00 WIB).</p>
+  </article>
 </BaseLayout>

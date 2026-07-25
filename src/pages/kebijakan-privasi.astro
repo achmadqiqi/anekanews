@@ -1,6 +1,71 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  name: "Kebijakan Privasi AnekaNews",
+  description: "Kebijakan privasi resmi AnekaNews mengenai pengumpulan data, penggunaan cookie, Google AdSense, dan hak pembaca.",
+  url: "https://anekanews.com/kebijakan-privasi",
+};
 ---
-<BaseLayout title="Kebijakan Privasi" description="Kebijakan privasi AnekaNews.">
-  <article class="prose-page"><span>Privasi</span><h1>Kebijakan Privasi</h1><p>AnekaNews mengumpulkan data teknis minimum yang diperlukan untuk keamanan, pengukuran performa, dan pengoperasian situs.</p><p>Kami tidak menjual data pribadi pembaca. Kebijakan ini akan diperbarui ketika fitur akun, komentar, atau analitik tambahan diluncurkan.</p></article>
+
+<BaseLayout
+  title="Kebijakan Privasi"
+  description="Kebijakan privasi AnekaNews mengenai perlindungan data pribadi, penggunaan cookie, Google AdSense, dan analitik."
+  {jsonLd}
+>
+  <article class="prose-page">
+    <span>Perlindungan Data</span>
+    <h1>Kebijakan Privasi</h1>
+    <p><em>Terakhir diperbarui: 26 Juli 2026</em></p>
+
+    <p>
+      Di AnekaNews (aksesibel dari <a href="https://anekanews.com">https://anekanews.com</a>), privasi pengunjung kami adalah salah satu prioritas utama kami. Dokumen Kebijakan Privasi ini berisi jenis informasi yang dikumpulkan dan dicatat oleh AnekaNews serta bagaimana kami menggunakannya.
+    </p>
+
+    <h2>1. Pengumpulan Data Teknis & Log Files</h2>
+    <p>
+      AnekaNews mengikuti prosedur standar menggunakan log file. Berkas ini mencatat pengunjung ketika mereka mengunjungi situs web. Informasi yang dikumpulkan oleh log file meliputi alamat protokol internet (IP address), jenis peramban (browser), Penyedia Layanan Internet (ISP), stempel tanggal dan waktu, halaman perujuk/keluar, dan jumlah klik. Informasi ini digunakan untuk menganalisis tren, mengelola situs, dan melacak pergerakan pengguna di situs web.
+    </p>
+
+    <h2>2. Penggunaan Cookie & Web Beacons</h2>
+    <p>
+      Seperti situs web lainnya, AnekaNews menggunakan 'cookie'. Cookie digunakan untuk menyimpan informasi termasuk preferensi pengunjung dan halaman di situs web yang diakses atau dikunjungi pengunjung. Informasi tersebut digunakan untuk mengoptimalkan pengalaman pengguna dengan menyesuaikan konten halaman web kami berdasarkan jenis browser pengunjung dan/atau informasi lainnya.
+    </p>
+
+    <h2>3. Cookie Google DoubleClick DART & Google AdSense</h2>
+    <p>
+      Google adalah salah satu vendor pihak ketiga di situs kami. Google juga menggunakan cookie, yang dikenal sebagai cookie DART, untuk menyajikan iklan kepada pengunjung situs kami berdasarkan kunjungan mereka ke situs kami dan situs lain di internet.
+    </p>
+    <ul>
+      <li>Pengunjung dapat memilih untuk menolak penggunaan cookie DART dengan mengunjungi Kebijakan Privasi jaringan iklan dan konten Google di URL berikut – <a href="https://policies.google.com/technologies/ads" target="_blank" rel="noopener noreferrer">https://policies.google.com/technologies/ads</a>.</li>
+      <li>Iklan pihak ketiga yang tayang di AnekaNews dapat menggunakan cookie dan web beacon untuk mengukur efektivitas kampanye iklan mereka.</li>
+    </ul>
+
+    <h2>4. Kebijakan Privasi Pihak Ketiga</h2>
+    <p>
+      Kebijakan Privasi AnekaNews tidak berlaku untuk pengiklan atau situs web lain. Jadi, kami menyarankan Anda untuk berkonsultasi dengan Kebijakan Privasi masing-masing dari server iklan pihak ketiga ini untuk informasi yang lebih terperinci. Ini mungkin mencakup praktik dan petunjuk mereka tentang cara memilih keluar (*opt-out*) dari opsi tertentu.
+    </p>
+
+    <h2>5. Pengelolaan Preferensi Cookie Pengguna</h2>
+    <p>
+      Anda dapat memilih untuk mematikan cookie melalui opsi browser individu Anda. Untuk mengetahui informasi lebih terperinci tentang manajemen cookie dengan browser web tertentu, informasi tersebut dapat ditemukan di situs web masing-masing browser.
+    </p>
+
+    <h2>6. Hak Perlindungan Data Pengguna</h2>
+    <p>
+      Setiap pembaca berhak atas hal-hal berikut:
+    </p>
+    <ul>
+      <li><strong>Hak Akses:</strong> Anda berhak meminta salinan data pribadi Anda.</li>
+      <li><strong>Hak Koreksi:</strong> Anda berhak meminta kami mengoreksi informasi yang Anda yakini tidak akurat.</li>
+      <li><strong>Hak Penghapusan:</strong> Anda berhak meminta kami menghapus data pribadi Anda dalam kondisi tertentu.</li>
+    </ul>
+
+    <h2>7. Hubungi Pengelola Privasi</h2>
+    <p>
+      Jika Anda memiliki pertanyaan tambahan atau memerlukan informasi lebih lanjut tentang Kebijakan Privasi kami, jangan ragu untuk menghubungi kami melalui email di <a href="mailto:redaksi@anekanews.com">redaksi@anekanews.com</a>.
+    </p>
+  </article>
 </BaseLayout>

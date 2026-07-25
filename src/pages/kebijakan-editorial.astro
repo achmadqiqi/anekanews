@@ -1,0 +1,42 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  name: "Kebijakan Editorial & Standar Jurnalistik AnekaNews",
+  description: "Kebijakan resmi AnekaNews mengenai standar penulisan, pemeriksaan fakta, hak jawab, dan penggunaan AI.",
+  url: "https://anekanews.com/kebijakan-editorial",
+};
+---
+
+<BaseLayout
+  title="Kebijakan Editorial"
+  description="Standar jurnalistik, kebijakan pembaruan, hak jawab, dan etika penulisan di AnekaNews."
+  {jsonLd}
+>
+  <article class="prose-page">
+    <span>Pedoman Redaksi</span>
+    <h1>Kebijakan Editorial & Standar Jurnalistik</h1>
+
+    <h2>1. Verifikasi Sumber & Pemeriksaan Fakta</h2>
+    <p>
+      Setiap fakta, angka, dan statistik yang dipublikasikan di AnekaNews harus ditelusuri dari sumber resmi, lembaga pemerintah, rilis publikasi, atau laporan riset bereputasi. Kami melarang keras pembuatan kutipan atau pengarangan data yang tidak dapat diverifikasi.
+    </p>
+
+    <h2>2. Kebijakan Penggunaan Artificial Intelligence (AI)</h2>
+    <p>
+      Teknologi AI digunakan terbatas untuk membantu pengumpulan data awal, perangkuman rilis, dan pembuatan draf pertama. <strong>Seluruh draf yang dihasilkan oleh AI wajib melalui proses pemeriksaan fakta, penyuntingan, dan persetujuan akhir oleh editor manusia sebelum diterbitkan.</strong>
+    </p>
+
+    <h2>3. Kebijakan Koreksi & Hak Jawab</h2>
+    <p>
+      Jika terdapat kesalahan material dalam artikel yang telah terbit, AnekaNews berkomitmen untuk segera melakukan koreksi secara transparan. Catatan perbaikan akan ditambahkan pada bagian bawah artikel yang diperbaiki. Pengajuan koreksi atau hak jawab dapat dikirimkan ke <a href="mailto:koreksi@anekanews.com">koreksi@anekanews.com</a>.
+    </p>
+
+    <h2>4. Kebijakan Tautan Bersponsor & Afiliasi</h2>
+    <p>
+      Tautan menuju situs eksternal atau produk komersial hanya dimasukkan jika memberikan nilai tambah nyata bagi pembaca. Tautan komersial atau bersponsor akan ditandai dengan atribut <code>rel="sponsored"</code> atau <code>rel="nofollow"</code> sesuai dengan pedoman mesin pencari.
+    </p>
+  </article>
+</BaseLayout>

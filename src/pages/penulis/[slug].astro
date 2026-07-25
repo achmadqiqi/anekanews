@@ -2,23 +2,65 @@
 import { env } from "cloudflare:workers";
 import ArticleCard from "../../components/ArticleCard.astro";
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getAuthor } from "../../lib/authors";
 import { getPublicPosts } from "../../lib/content";
 
 const slug = Astro.params.slug ?? "";
-if (slug !== "redaksi-anekanews") return Astro.redirect("/404");
-const posts = await getPublicPosts((env as any).DB);
+const author = getAuthor(slug);
+
+if (!author) {
+  return Astro.redirect("/404");
+}
+
+const allPosts = await getPublicPosts((env as any).DB).catch(() => []);
+const authorPosts = allPosts.filter(
+  (post) =>
+    post.author.toLowerCase() === author.name.toLowerCase() ||
+    slug === "redaksi-anekanews"
+);
+
+const personJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  name: author.name,
+  jobTitle: author.role,
+  description: author.bio,
+  knowsAbout: author.expertise,
+  worksFor: {
+    "@type": "Organization",
+    name: "AnekaNews",
+    url: "https://anekanews.com",
+  },
+};
 ---
 
 <BaseLayout
-  title="Redaksi AnekaNews"
-  description="Artikel yang disusun dan diperiksa oleh Redaksi AnekaNews."
+  title={`${author.name} - ${author.role}`}
+  description={author.bio}
+  jsonLd={personJsonLd}
 >
-  <section class="search-page">
-    <span class="section-kicker">Penulis</span>
-    <h1>Redaksi AnekaNews</h1>
-    <p>Tim editorial yang menyajikan informasi praktis dari sumber yang dapat ditelusuri.</p>
-    <div class="card-grid">
-      {posts.map((post) => <ArticleCard {post} />)}
+  <section class="search-page" style="margin-top: 2rem;">
+    <div style="background: #ffffff; border: 1px solid #e5e7eb; padding: 2rem; margin-bottom: 2rem;">
+      <span class="section-kicker" style="color: var(--color-primary); font-weight: 800; text-transform: uppercase; font-size: 0.75rem;">Profil Penulis & Redaksi</span>
+      <h1 style="font-size: 2rem; font-weight: 900; margin: 0.5rem 0; color: #111;">{author.name}</h1>
+      <p style="font-weight: 700; color: var(--color-primary); margin-bottom: 1rem;">{author.role}</p>
+      <p style="font-size: 1rem; line-height: 1.6; color: #374151; margin-bottom: 1.5rem;">{author.bio}</p>
+      
+      <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+        {author.expertise.map((exp) => (
+          <span style="background: #f3f4f6; color: #4b5563; padding: 0.25rem 0.75rem; border-radius: 4px; font-size: 0.8rem; font-weight: 600;">{exp}</span>
+        ))}
+      </div>
     </div>
+
+    <h2 style="font-size: 1.35rem; font-weight: 900; margin-bottom: 1.5rem; text-transform: uppercase;">Artikel oleh {author.name}</h2>
+    
+    {authorPosts.length > 0 ? (
+      <div class="grid-3col">
+        {authorPosts.map((post) => <ArticleCard {post} variant="grid" />)}
+      </div>
+    ) : (
+      <p style="color: #6b7280; font-style: italic;">Belum ada artikel publikasi langsung di bawah nama ini.</p>
+    )}
   </section>
 </BaseLayout>

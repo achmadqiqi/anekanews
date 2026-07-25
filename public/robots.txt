@@ -2,5 +2,7 @@ User-agent: *
 Allow: /
 Disallow: /admin/
 Disallow: /_emdash/
+Disallow: /quick-login
+Disallow: /cari?*
 
 Sitemap: https://anekanews.com/sitemap.xml
