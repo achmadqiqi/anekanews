@@ -85,8 +85,8 @@ export function getPost(slug: string): PublicPost | undefined {
 }
 
 export function getPostsByChannel(channel: string): PublicPost[] {
-  if (!CHANNELS.some((item) => item.slug === channel)) return [];
-  return DEMO_POSTS.filter((post) => post.channel === channel);
+  const norm = channel === "rumah-properti" ? "properti" : channel === "gaya-hidup" ? "lifestyle" : channel;
+  return DEMO_POSTS.filter((post) => post.channel === channel || post.channel === norm);
 }
 
 interface ArticleRow {
@@ -156,18 +156,37 @@ export async function getPublicPosts(
   if (!db) {
     return channel ? getPostsByChannel(channel) : [...DEMO_POSTS];
   }
-  const query = channel
-    ? db
+
+  let query;
+  if (channel) {
+    if (channel === "rumah-properti" || channel === "properti") {
+      query = db.prepare(
+        `SELECT slug, title, excerpt, body, channel, author, published_at, image_url, sources_json
+         FROM published_articles WHERE channel IN ('properti', 'rumah-properti')
+         ORDER BY published_at DESC LIMIT 50`
+      );
+    } else if (channel === "gaya-hidup" || channel === "lifestyle") {
+      query = db.prepare(
+        `SELECT slug, title, excerpt, body, channel, author, published_at, image_url, sources_json
+         FROM published_articles WHERE channel IN ('gaya-hidup', 'lifestyle')
+         ORDER BY published_at DESC LIMIT 50`
+      );
+    } else {
+      query = db
         .prepare(
           `SELECT slug, title, excerpt, body, channel, author, published_at, image_url, sources_json
            FROM published_articles WHERE channel = ?
            ORDER BY published_at DESC LIMIT 50`,
         )
-        .bind(channel)
-    : db.prepare(
-        `SELECT slug, title, excerpt, body, channel, author, published_at, image_url, sources_json
-         FROM published_articles ORDER BY published_at DESC LIMIT 50`,
-      );
+        .bind(channel);
+    }
+  } else {
+    query = db.prepare(
+      `SELECT slug, title, excerpt, body, channel, author, published_at, image_url, sources_json
+       FROM published_articles ORDER BY published_at DESC LIMIT 50`,
+    );
+  }
+
   const result = await query.all<ArticleRow>();
   const generated = result.results.map(rowToPost);
   return generated.length > 0 ? generated : [...DEMO_POSTS];

@@ -18,6 +18,16 @@ const { title, description, type = "website", jsonLd } = Astro.props;
 <!doctype html>
 <html lang="id">
   <head>
+    <script is:inline>
+      (function() {
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+          document.documentElement.setAttribute('data-theme', 'dark');
+        } else {
+          document.documentElement.setAttribute('data-theme', 'light');
+        }
+      })();
+    </script>
     <SeoHead {title} {description} {type} {jsonLd} />
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>AN</text></svg>" />
   </head>
@@ -25,7 +35,7 @@ const { title, description, type = "website", jsonLd } = Astro.props;
     <a class="skip-link" href="#content">Lewati ke isi</a>
     <div class="wrapper-boxed">
       <Header />
-      <main id="content" class="main-container">
+      <main id="content">
         <slot />
       </main>
       <Footer />

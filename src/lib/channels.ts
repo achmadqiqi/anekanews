@@ -43,7 +43,8 @@ export const CHANNELS: readonly Channel[] = [
 ];
 
 export function getChannel(slug: string): Channel {
-  const channel = CHANNELS.find((item) => item.slug === slug);
+  const normalized = slug === "properti" ? "rumah-properti" : slug === "lifestyle" ? "gaya-hidup" : slug;
+  const channel = CHANNELS.find((item) => item.slug === normalized || item.slug === slug);
   if (!channel) throw new Error(`Unknown channel: ${slug}`);
   return channel;
 }
