@@ -55,7 +55,7 @@ Setiap file artikel wajib ditulis dalam format JSON berikut:
 ## 4. Kredensial Database (D1)
 * **Account ID:** `c22018ef1434d958e89d537c898f446b`
 * **DB UUID:** `e4f6f6e7-63c4-4c0d-ad37-0ebe7e96ded6`
-* **CF API Token:** `cfut_osOBuyS6i6yEEOtJ4kerG0mo7myqstoRoVshKZJZ0e9f93a3`
+* **CF API Token:** `[CLOUDFLARE_API_TOKEN]`
 * **Target Site URL:** `https://anekanews.com/artikel/[slug]`
 
 ---
@@ -135,7 +135,7 @@ Sebelum melanjutkan ke tahap penyimpanan, pastikan checklist berikut terpenuhi:
 * **Perintah Curl eksekusi:**
   ```bash
   curl -s -X POST "https://api.cloudflare.com/client/v4/accounts/c22018ef1434d958e89d537c898f446b/d1/database/e4f6f6e7-63c4-4c0d-ad37-0ebe7e96ded6/query" \
-    -H "Authorization: Bearer cfut_osOBuyS6i6yEEOtJ4kerG0mo7myqstoRoVshKZJZ0e9f93a3" \
+    -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
     -H "Content-Type: application/json" \
     -d @/tmp/payload.json
   ```
