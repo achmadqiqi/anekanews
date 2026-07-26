@@ -7,7 +7,7 @@ interface Props {
   rank?: number;
 }
 
-const { post, variant = "grid", rank = 1 } = Astro.props;
+const { post, variant = "grid" } = Astro.props;
 
 function getChannelColor(channel: string): string {
   switch (channel.toLowerCase()) {
@@ -31,8 +31,6 @@ const formattedDate = new Date(post.publishedAt).toLocaleDateString("id-ID", {
 
 {variant === "most-read" && (
   <article class="most-read-item">
-    <span class="badge-num">{rank}</span>
-    <div class="most-read-avatar" style={`background: ${gradientBg};`}></div>
     <div class="most-read-copy">
       <span class="most-read-category">{post.channel}</span>
       <a href={`/artikel/${post.slug}`} class="most-read-title">
