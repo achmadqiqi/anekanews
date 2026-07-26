@@ -26,6 +26,7 @@ export const DEMO_POSTS: readonly PublicPost[] = [
     author: "Redaksi AnekaNews",
     readingMinutes: 6,
     featured: true,
+    image_url: "/images/membangun-fasilitas-olahraga-yang-bertahan-lama.jpg",
     body: [
       "Fasilitas olahraga yang baik tidak hanya terlihat menarik ketika pertama kali dibuka. Kualitas sebenarnya terlihat setelah digunakan setiap hari, terkena perubahan cuaca, dan menjalani perawatan rutin.",
       "Perencanaan perlu dimulai dari kebutuhan pengguna, karakter lokasi, sistem drainase, pilihan material, dan pola operasional. Keputusan yang tepat sejak awal dapat mengurangi biaya perbaikan sekaligus meningkatkan kenyamanan.",
@@ -41,6 +42,7 @@ export const DEMO_POSTS: readonly PublicPost[] = [
     publishedAt: new Date("2026-07-23T08:00:00+07:00"),
     author: "Redaksi AnekaNews",
     readingMinutes: 5,
+    image_url: "/images/ai-agent-mengubah-cara-umkm-bekerja.jpg",
     body: [
       "AI agent membantu usaha kecil mengotomatisasi pekerjaan berulang, mulai dari pengelolaan data hingga penyusunan laporan.",
       "Manfaat terbesar muncul ketika proses bisnis sudah jelas. Otomatisasi yang dipasang pada proses yang berantakan justru dapat mempercepat kesalahan.",
@@ -55,6 +57,7 @@ export const DEMO_POSTS: readonly PublicPost[] = [
     publishedAt: new Date("2026-07-22T08:00:00+07:00"),
     author: "Redaksi AnekaNews",
     readingMinutes: 7,
+    image_url: "/images/kolam-renang-rumah-perlu-direncanakan-sejak-awal.jpg",
     body: [
       "Kolam renang pribadi di hunian menambah kenyamanan sekaligus nilai properti jika direncanakan secara teknis.",
       "Pertimbangan beban tanah, akses pipa sirkulasi, dan pagar pengaman wajib dipikirkan sebelum konstruksi.",
@@ -69,6 +72,7 @@ export const DEMO_POSTS: readonly PublicPost[] = [
     publishedAt: new Date("2026-07-21T08:00:00+07:00"),
     author: "Redaksi AnekaNews",
     readingMinutes: 4,
+    image_url: "/images/tren-olahraga-padel-di-kota-besar.jpg",
     body: [
       "Padel kombinasi tenis dan skuasy dengan dinding kaca yang membuat bola tetap dimainkan.",
       "Lapangan yang lebih ringkas memungkinkan interaksi sosial yang lebih hangat di antara pemain.",
