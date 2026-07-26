@@ -35,7 +35,7 @@ Setiap pembuatan, pengeditan, atau pengelolaan artikel di anekanews.com **WAJIB*
 ## 4. Hak Cipta (UU No. 28/2014)
 * **Plagiarisme:** Dilarang menyalin (copy-paste) artikel dari media atau pihak lain tanpa izin tertulis dan atribusi yang jelas.
 * **Fair Use:** Pengutipan wajar diperbolehkan dengan syarat mencantumkan/menyebutkan sumber aslinya secara jelas.
-* **Sumber Gambar:** Gambar atau foto yang digunakan wajib bebas hak cipta (royalty-free) or dari platform resmi yang diizinkan (misalnya Unsplash, Pexels, dll).
+* **Sumber Gambar:** Gambar atau foto yang digunakan wajib bebas hak cipta (royalty-free) atau dari platform resmi yang diizinkan (misalnya Unsplash, Pexels, dll).
 
 ---
 
@@ -57,6 +57,7 @@ Sebagai portal berita yang memanfaatkan bantuan AI, aturan berikut sangat krusia
 3. Tulis daftar sumber referensi di bagian paling bawah artikel.
 4. Pertahankan nada penulisan yang netral, objektif, dan informatif.
 5. Berikan label **"Opini"** atau **"Analisis"** jika menyajikan opini atau penilaian subjektif.
+6. **Panjang Artikel Komprehensif:** Setiap artikel **WAJIB** memiliki panjang **MINIMAL 1000 KATA** dengan pembahasan mendalam dan kaya konteks.
 
 ### Dilarang Keras:
 1. Membuat kutipan palsu dari tokoh nyata.
@@ -71,7 +72,7 @@ Sebagai portal berita yang memanfaatkan bantuan AI, aturan berikut sangat krusia
 ## 7. Struktur Artikel Aman
 * **Judul:** Menarik dan jujur, tidak menyesatkan/clickbait.
 * **Lead (Paragraf Pertama):** Menyajikan fakta utama yang memenuhi unsur 5W+1H (Who, What, Why, Where, When, How).
-* **Body (Tubuh Berita):** Menyajikan fakta pendukung yang disusun menggunakan metode piramida terbalik (fakta terpenting di atas) dengan atribusi sumber yang jelas.
+* **Body (Tubuh Berita):** Menyajikan fakta pendukung yang disusun menggunakan metode piramida terbalik (fakta terpenting di atas) dengan atribusi sumber yang jelas. Minimal 1000 kata dengan subjudul H2/H3.
 * **Opini/Analisis:** Jika ada, tandai secara eksplisit agar pembaca tahu itu adalah sudut pandang subjektif.
 * **Disclaimer:** Untuk topik khusus seperti kesehatan, finansial, investasi, atau hukum, wajib menyertakan catatan agar pembaca berkonsultasi dengan profesional terkait.
 * **Sumber:** Tuliskan daftar pustaka atau sumber rujukan secara jelas di akhir artikel.
@@ -86,4 +87,4 @@ Sebagai portal berita yang memanfaatkan bantuan AI, aturan berikut sangat krusia
 5. **Gaya Bahasa:** Gunakan gaya bahasa yang menarik, informatif, dan netral.
 6. **Pemilihan & Optimalisasi Gambar (Minimal 2 Gambar):** Cari minimal 2 gambar/foto yang tepat dan relevan untuk topik tersebut. Sesuaikan resolusi dan ukuran file agar performa kecepatan muat halaman (*load speed*) tetap optimal. Diperbolehkan juga membuat gambar ilustrasi sendiri yang menggambarkan topik terkait.
 7. **Kepatuhan Aturan Pengutipan:** Jika mengutip dari sumber lain, ikuti aturan jurnalistik secara ketat.
-8. **Panjang Artikel Proporsional:** Panjang artikel harus disesuaikan dengan kedalaman tema atau topik yang dibahas (tidak terlalu pendek/kurang informatif, dan tidak terlalu panjang/membosankan).
+8. **Panjang Artikel Proporsional & Komprehensif:** Panjang artikel **MINIMAL 1000 KATA**, mendalam, edukatif, dan ramah pembaca seluler (maksimal 3 kalimat per paragraf).

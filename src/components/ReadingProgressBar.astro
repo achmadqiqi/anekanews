@@ -1,0 +1,33 @@
+---
+---
+
+<div id="reading-progress-bar" class="reading-progress" aria-hidden="true"></div>
+
+<style>
+  .reading-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 3px;
+    background-color: var(--color-accent);
+    width: 0%;
+    z-index: 9999;
+    transition: width 0.1s ease-out;
+  }
+</style>
+
+<script is:inline>
+  (function () {
+    const progressBar = document.getElementById("reading-progress-bar");
+    if (!progressBar) return;
+
+    window.addEventListener("scroll", function () {
+      const scrollTop = window.scrollY || document.documentElement.scrollTop;
+      const docHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      if (docHeight > 0) {
+        const percentage = (scrollTop / docHeight) * 100;
+        progressBar.style.width = Math.min(percentage, 100) + "%";
+      }
+    }, { passive: true });
+  })();
+</script>

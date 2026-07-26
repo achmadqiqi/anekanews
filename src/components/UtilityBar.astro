@@ -1,0 +1,59 @@
+---
+const today = new Date().toLocaleDateString("id-ID", {
+  weekday: "long",
+  day: "numeric",
+  month: "long",
+  year: "numeric",
+});
+---
+
+<div class="utility-bar">
+  <div class="main-container utility-inner">
+    <div class="utility-date">
+      <span>{today}</span>
+    </div>
+    <div class="utility-links">
+      <a href="/tentang">Tentang Kami</a>
+      <a href="/kontak">Kontak Redaksi</a>
+      <a href="/pedoman-media">Pedoman Media Siber</a>
+      <a href="/kebijakan-editorial">Kebijakan Editorial</a>
+    </div>
+  </div>
+</div>
+
+<style>
+  .utility-bar {
+    background-color: var(--color-primary);
+    color: rgba(255, 255, 255, 0.75);
+    font-size: 0.75rem;
+    font-weight: 500;
+    border-bottom: 1px solid var(--color-border-dark);
+  }
+  .utility-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 34px;
+  }
+  .utility-date {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .utility-links {
+    display: flex;
+    gap: 1.25rem;
+  }
+  .utility-links a {
+    color: rgba(255, 255, 255, 0.85);
+    transition: color 0.15s ease;
+  }
+  .utility-links a:hover {
+    color: #ffffff;
+  }
+  @media (max-width: 860px) {
+    .utility-bar {
+      display: none;
+    }
+  }
+</style>

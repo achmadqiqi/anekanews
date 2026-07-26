@@ -1,0 +1,158 @@
+---
+import { CHANNELS } from "../lib/channels";
+---
+
+<div id="mobile-menu-drawer" class="mobile-menu-drawer" aria-hidden="true">
+  <div id="mobile-menu-backdrop" class="mobile-menu-backdrop"></div>
+  <div class="mobile-menu-panel">
+    <div class="mobile-menu-header">
+      <a href="/" class="mobile-brand">ANEKA<span>NEWS</span></a>
+      <button id="btn-close-mobile-menu" class="btn-icon-close" aria-label="Tutup Menu">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+
+    <nav class="mobile-nav-list" aria-label="Navigasi Seluler">
+      <a href="/" class="mobile-nav-item active">Beranda / Terbaru</a>
+      {CHANNELS.map((channel) => (
+        <a href={`/kategori/${channel.slug}`} class="mobile-nav-item">
+          {channel.name}
+        </a>
+      ))}
+    </nav>
+
+    <div class="mobile-menu-footer">
+      <div class="mobile-footer-links">
+        <a href="/tentang">Tentang Kami</a>
+        <a href="/kontak">Kontak Redaksi</a>
+        <a href="/pedoman-media">Pedoman Media Siber</a>
+        <a href="/kebijakan-privasi">Kebijakan Privasi</a>
+      </div>
+      <p class="mobile-copyright">© {new Date().getFullYear()} AnekaNews. Hak Cipta Dilindungi.</p>
+    </div>
+  </div>
+</div>
+
+<style>
+  .mobile-menu-drawer {
+    position: fixed;
+    inset: 0;
+    z-index: 2000;
+    display: none;
+  }
+  .mobile-menu-drawer.is-open {
+    display: block;
+  }
+  .mobile-menu-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(11, 18, 32, 0.6);
+    backdrop-filter: blur(2px);
+  }
+  .mobile-menu-panel {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    width: 85%;
+    max-width: 340px;
+    background: #ffffff;
+    display: flex;
+    flex-direction: column;
+    box-shadow: -10px 0 25px rgba(0, 0, 0, 0.15);
+    z-index: 10;
+    padding: 1.25rem;
+  }
+  .mobile-menu-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--color-border);
+  }
+  .mobile-brand {
+    font-size: 1.15rem;
+    font-weight: 900;
+    color: var(--color-primary);
+    letter-spacing: -0.02em;
+  }
+  .mobile-brand span {
+    color: var(--color-accent);
+  }
+  .btn-icon-close {
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: var(--color-text);
+  }
+  .mobile-nav-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding: 1.25rem 0;
+    flex: 1;
+    overflow-y: auto;
+  }
+  .mobile-nav-item {
+    padding: 0.85rem 1rem;
+    font-weight: 700;
+    font-size: 1rem;
+    color: var(--color-text);
+    border-radius: 6px;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+  }
+  .mobile-nav-item:hover, .mobile-nav-item.active {
+    background-color: var(--color-surface);
+    color: var(--color-accent);
+  }
+  .mobile-menu-footer {
+    padding-top: 1rem;
+    border-top: 1px solid var(--color-border);
+  }
+  .mobile-footer-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 1rem;
+    font-size: 0.8rem;
+    color: var(--color-text-muted);
+    margin-bottom: 0.75rem;
+  }
+  .mobile-copyright {
+    font-size: 0.75rem;
+    color: #94a3b8;
+  }
+</style>
+
+<script is:inline>
+  (function () {
+    const drawer = document.getElementById("mobile-menu-drawer");
+    const closeBtn = document.getElementById("btn-close-mobile-menu");
+    const backdrop = document.getElementById("mobile-menu-backdrop");
+
+    function closeMenu() {
+      if (drawer) {
+        drawer.classList.remove("is-open");
+        drawer.setAttribute("aria-hidden", "true");
+        document.body.classList.remove("menu-open");
+      }
+    }
+
+    closeBtn?.addEventListener("click", closeMenu);
+    backdrop?.addEventListener("click", closeMenu);
+
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" && drawer?.classList.contains("is-open")) {
+        closeMenu();
+      }
+    });
+  })();
+</script>

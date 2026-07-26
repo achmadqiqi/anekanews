@@ -3,14 +3,15 @@ import { CHANNELS } from "../lib/channels";
 ---
 
 <footer class="site-footer">
-  <div class="footer-inner">
+  <div class="main-container footer-inner">
     <div class="footer-grid">
-      <div>
+      <div class="footer-brand-col">
         <a class="footer-brand" href="/">ANEKA<span>NEWS</span></a>
         <p class="footer-desc">
-          Portal berita independen menyajikan kabar terpercaya seputar olahraga, teknologi, properti, bisnis, dan gaya hidup.
+          Portal berita dan artikel digital independen berbahasa Indonesia. Menyajikan informasi tepercaya seputar rumah & properti, olahraga, teknologi, bisnis, dan gaya hidup.
         </p>
       </div>
+
       <div class="footer-col">
         <h3>Kanal Berita</h3>
         <ul>
@@ -19,20 +20,115 @@ import { CHANNELS } from "../lib/channels";
           ))}
         </ul>
       </div>
+
       <div class="footer-col">
         <h3>Informasi & Redaksi</h3>
         <ul>
           <li><a href="/tentang">Tentang Kami</a></li>
           <li><a href="/kontak">Kontak Redaksi</a></li>
           <li><a href="/pedoman-media">Pedoman Media Siber</a></li>
+          <li><a href="/kebijakan-editorial">Kebijakan Editorial</a></li>
           <li><a href="/kebijakan-privasi">Kebijakan Privasi</a></li>
           <li><a href="/disclaimer">Disclaimer</a></li>
         </ul>
       </div>
     </div>
+
     <div class="footer-bottom">
-      <p>© {new Date().getFullYear()} AnekaNews. Kabar Hari Ini & Berita Terkini. Hak Cipta Dilindungi.</p>
-      <p><a href="/rss.xml">RSS Feed</a> • <a href="/sitemap.xml">Sitemap</a></p>
+      <p>© {new Date().getFullYear()} AnekaNews. Hak Cipta Dilindungi.</p>
+      <div class="footer-bottom-links">
+        <a href="/rss.xml">RSS Feed</a>
+        <span>•</span>
+        <a href="/sitemap.xml">Sitemap XML</a>
+      </div>
     </div>
   </div>
 </footer>
+
+<style>
+  .site-footer {
+    background-color: var(--color-primary);
+    color: rgba(255, 255, 255, 0.8);
+    padding: 3rem 0 2rem;
+    margin-top: auto;
+    border-top: 1px solid var(--color-border-dark);
+  }
+  .footer-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 2.5rem;
+    padding-bottom: 2.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  .footer-brand {
+    font-size: 1.5rem;
+    font-weight: 900;
+    color: #ffffff;
+    letter-spacing: -0.02em;
+    display: inline-block;
+    margin-bottom: 0.75rem;
+  }
+  .footer-brand span {
+    color: var(--color-accent);
+  }
+  .footer-desc {
+    font-size: 0.88rem;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.65);
+    max-width: 420px;
+  }
+  .footer-col h3 {
+    font-size: 0.9rem;
+    font-weight: 800;
+    color: #ffffff;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 1rem;
+  }
+  .footer-col ul {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .footer-col a {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.75);
+    transition: color 0.15s ease;
+  }
+  .footer-col a:hover {
+    color: var(--color-accent);
+  }
+  .footer-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 1.5rem;
+    font-size: 0.78rem;
+    color: rgba(255, 255, 255, 0.5);
+  }
+  .footer-bottom-links {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .footer-bottom-links a {
+    color: rgba(255, 255, 255, 0.7);
+  }
+  .footer-bottom-links a:hover {
+    color: #ffffff;
+  }
+
+  @media (max-width: 768px) {
+    .footer-grid {
+      grid-template-columns: 1fr;
+      gap: 1.75rem;
+    }
+    .footer-bottom {
+      flex-direction: column;
+      gap: 0.75rem;
+      align-items: flex-start;
+    }
+  }
+</style>

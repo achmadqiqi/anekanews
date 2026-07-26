@@ -1,10 +1,13 @@
 ---
 import { env } from "cloudflare:workers";
-import BaseLayout from "./BaseLayout.astro";
+import AdSlot from "../components/AdSlot.astro";
 import Breadcrumb from "../components/Breadcrumb.astro";
+import ReadingProgressBar from "../components/ReadingProgressBar.astro";
 import RelatedArticlesNav from "../components/RelatedArticlesNav.astro";
-import { formatIndonesianDate, getPublicPosts, type PublicPost } from "../lib/content";
+import BaseLayout from "./BaseLayout.astro";
+import { AUTHORS, getAuthor } from "../lib/authors";
 import { getChannel } from "../lib/channels";
+import { formatIndonesianDate, getPublicPosts, type PublicPost } from "../lib/content";
 
 interface Props {
   post: PublicPost;
@@ -14,75 +17,325 @@ const { post } = Astro.props;
 const channel = getChannel(post.channel);
 const allPosts = await getPublicPosts((env as any).DB).catch(() => []);
 
+// Author Resolution
+const authorSlug = post.author.toLowerCase().replace(/\s+/g, "-");
+const authorProfile = getAuthor(authorSlug) || AUTHORS["redaksi-anekanews"];
+
+// Calculated Reading Time
+const totalWords = post.body.join(" ").split(/\s+/).length;
+const readingMinutes = Math.max(1, Math.ceil(totalWords / 200));
+
 const articleJsonLd = {
   "@context": "https://schema.org",
-  "@type": "Article",
+  "@type": "NewsArticle",
   headline: post.title,
   description: post.excerpt,
   datePublished: post.publishedAt.toISOString(),
   dateModified: post.publishedAt.toISOString(),
-  author: { "@type": "Organization", name: post.author },
-  publisher: { "@type": "Organization", name: "AnekaNews", url: "https://anekanews.com" },
+  author: {
+    "@type": "Person",
+    name: authorProfile.name,
+    jobTitle: authorProfile.role,
+    url: `https://anekanews.com/penulis/${authorProfile.slug}`,
+  },
+  publisher: {
+    "@type": "Organization",
+    name: "AnekaNews",
+    url: "https://anekanews.com",
+    logo: {
+      "@type": "ImageObject",
+      url: "https://anekanews.com/images/logo.png",
+    },
+  },
   mainEntityOfPage: new URL(`/artikel/${post.slug}`, Astro.site),
 };
 ---
 
 <BaseLayout title={post.title} description={post.excerpt} type="article" jsonLd={articleJsonLd}>
-  <article class="article-page">
-    <!-- Breadcrumb Content Navigation -->
-    <Breadcrumb
-      items={[
-        { label: channel.name, href: `/kategori/${channel.slug}` },
-        { label: post.title },
-      ]}
-    />
+  <!-- Top Reading Progress Indicator -->
+  <ReadingProgressBar />
 
-    <header class="article-heading">
-      <a class="eyebrow" href={`/kategori/${channel.slug}`}>{channel.name}</a>
-      <h1>{post.title}</h1>
-      <p class="standfirst">{post.excerpt}</p>
-      <div class="byline">
-        <strong>{post.author}</strong>
-        <time datetime={post.publishedAt.toISOString()}>{formatIndonesianDate(post.publishedAt)}</time>
-        <span>{post.readingMinutes} menit baca</span>
-      </div>
-    </header>
+  <article class="neo-article-wrapper">
+    <div class="main-container">
+      <div class="article-reading-container">
+        <!-- Breadcrumb Navigation -->
+        <Breadcrumb
+          items={[
+            { label: channel.name, href: `/kategori/${channel.slug}` },
+            { label: post.title },
+          ]}
+        />
 
-    {post.image_url ? (
-      <div class="article-hero">
-        <picture>
-          <source srcset={post.image_url} type="image/webp" />
-          <img src={post.image_url} alt={post.title} loading="eager" fetchpriority="high" />
-        </picture>
-      </div>
-    ) : (
-      <div class={`article-hero visual-${post.channel}`}><span>{channel.name}</span></div>
-    )}
+        <!-- Article Header -->
+        <header class="article-header">
+          <a class="category-eyebrow" href={`/kategori/${channel.slug}`}>{channel.name}</a>
+          <h1 class="article-headline">{post.title}</h1>
+          <p class="article-lead">{post.excerpt}</p>
 
-    <div class="article-body">
-      {post.body.map((paragraph) => <p>{paragraph}</p>)}
+          <!-- Byline Metadata -->
+          <div class="article-byline">
+            <div class="byline-author-info">
+              <span class="author-name">Oleh <a href={`/penulis/${authorProfile.slug}`}>{authorProfile.name}</a></span>
+              <span class="byline-dot">•</span>
+              <time datetime={post.publishedAt.toISOString()}>{formatIndonesianDate(post.publishedAt)}</time>
+              <span class="byline-dot">•</span>
+              <span class="reading-time">{readingMinutes} min baca</span>
+            </div>
 
-      {post.images && post.images.length > 0 && (
-        <div class="article-gallery">
-          {post.images.map((img) => (
-            <figure class="article-gallery-item">
-              <picture>
-                <source srcset={img.image_url} type="image/webp" />
-                <img src={img.image_url} alt={img.alt_text || post.title} loading="lazy" />
-              </picture>
-              {img.alt_text && <figcaption>{img.alt_text}</figcaption>}
-            </figure>
-          ))}
+            <!-- Copy Link Action Tool -->
+            <button id="btn-copy-link" class="btn-tool-copy" title="Salin Tautan Artikel">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+              </svg>
+              <span id="copy-status-text">Salin Tautan</span>
+            </button>
+          </div>
+        </header>
+
+        <!-- Main Hero Image (Optimized LCP) -->
+        {post.image_url && (
+          <figure class="article-hero-figure">
+            <img src={post.image_url} alt={post.title} loading="eager" fetchpriority="high" class="article-hero-img" />
+            <figcaption class="hero-caption">Foto / Dokumentasi Ilustrasi: AnekaNews</figcaption>
+          </figure>
+        )}
+
+        <!-- Top Article Ad Slot Placeholder -->
+        <AdSlot slotId="article-top-banner" format="auto" />
+
+        <!-- Article Body Content -->
+        <div class="article-body-content">
+          {post.body.map((paragraph) => <p>{paragraph}</p>)}
+
+          {post.images && post.images.length > 0 && (
+            <div class="article-gallery">
+              {post.images.map((img) => (
+                <figure class="article-gallery-item">
+                  <img src={img.image_url} alt={img.alt_text || post.title} loading="lazy" />
+                  {img.alt_text && <figcaption>{img.alt_text}</figcaption>}
+                </figure>
+              ))}
+            </div>
+          )}
         </div>
-      )}
 
-      <aside>
-        <strong>Catatan Redaksi</strong>
-        <p>Artikel ini disusun sebagai informasi umum. Verifikasi kebutuhan dan kondisi Anda sebelum mengambil keputusan teknis atau komersial.</p>
-      </aside>
+        <!-- Primary Sources Box -->
+        {post.sources && post.sources.length > 0 && (
+          <section class="sources-box">
+            <h4>Sumber & Referensi Primer:</h4>
+            <ul>
+              {post.sources.map((src) => (
+                <li>
+                  <a href={src.url} target="_blank" rel="noopener noreferrer">
+                    {src.title || src.url}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
+
+        <!-- Author Bio Card -->
+        <section class="author-bio-card">
+          <div class="author-bio-details">
+            <span class="author-label">PENULIS / REDAKSI</span>
+            <h3><a href={`/penulis/${authorProfile.slug}`}>{authorProfile.name}</a></h3>
+            <p class="author-role">{authorProfile.role}</p>
+            <p class="author-description">{authorProfile.bio}</p>
+          </div>
+        </section>
+
+        <!-- Bottom Ad Slot Placeholder -->
+        <AdSlot slotId="article-bottom-banner" format="auto" />
+
+        <!-- Related Articles Grid -->
+        <RelatedArticlesNav currentPost={post} {allPosts} />
+      </div>
     </div>
-
-    <!-- Article Content Switcher & Related Articles Navigation -->
-    <RelatedArticlesNav currentPost={post} {allPosts} />
   </article>
 </BaseLayout>
+
+<style>
+  .neo-article-wrapper {
+    padding: 2rem 0 4rem;
+    background-color: var(--color-background);
+  }
+  .article-reading-container {
+    max-width: 740px;
+    margin: 0 auto;
+  }
+  .article-header {
+    margin: 1.5rem 0 2rem;
+  }
+  .article-headline {
+    font-size: 2.25rem;
+    font-weight: 900;
+    color: var(--color-primary);
+    line-height: 1.25;
+    margin: 0.5rem 0 1rem;
+    letter-spacing: -0.02em;
+  }
+  .article-lead {
+    font-size: 1.15rem;
+    color: var(--color-text-muted);
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+    font-weight: 500;
+  }
+  .article-byline {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.85rem 0;
+    border-top: 1px solid var(--color-border);
+    border-bottom: 1px solid var(--color-border);
+    font-size: 0.85rem;
+    color: var(--color-text-muted);
+  }
+  .byline-author-info {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+  .author-name a {
+    font-weight: 800;
+    color: var(--color-primary);
+  }
+  .author-name a:hover {
+    color: var(--color-accent);
+  }
+  .btn-tool-copy {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    padding: 0.3rem 0.75rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    color: var(--color-text);
+    transition: all 0.15s ease;
+  }
+  .btn-tool-copy:hover {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+  }
+
+  /* Hero Image */
+  .article-hero-figure {
+    margin: 0 0 2rem;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .article-hero-img {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+  }
+  .hero-caption {
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+    margin-top: 0.5rem;
+    font-style: italic;
+  }
+
+  /* Article Body Styling */
+  .article-body-content {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: var(--color-text);
+    margin-bottom: 2.5rem;
+  }
+  .article-body-content p {
+    margin-bottom: 1.5rem;
+  }
+
+  /* Primary Sources Box */
+  .sources-box {
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-left: 4px solid var(--color-accent);
+    padding: 1.25rem;
+    border-radius: 4px;
+    margin-bottom: 2rem;
+  }
+  .sources-box h4 {
+    font-size: 0.85rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    color: var(--color-primary);
+    margin-bottom: 0.5rem;
+  }
+  .sources-box ul {
+    list-style: none;
+    padding-left: 0;
+  }
+  .sources-box li {
+    font-size: 0.85rem;
+    margin-bottom: 0.35rem;
+  }
+  .sources-box a {
+    color: var(--color-accent);
+    font-weight: 600;
+    word-break: break-all;
+  }
+
+  /* Author Bio Card */
+  .author-bio-card {
+    background: #ffffff;
+    border: 1px solid var(--color-border);
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin-bottom: 2.5rem;
+  }
+  .author-label {
+    font-size: 0.7rem;
+    font-weight: 800;
+    color: var(--color-accent);
+    letter-spacing: 0.08em;
+  }
+  .author-bio-details h3 {
+    font-size: 1.15rem;
+    font-weight: 800;
+    margin: 0.25rem 0 0.15rem;
+  }
+  .author-role {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--color-primary-soft);
+    margin-bottom: 0.75rem;
+  }
+  .author-description {
+    font-size: 0.9rem;
+    color: var(--color-text-muted);
+    line-height: 1.5;
+  }
+
+  @media (max-width: 640px) {
+    .article-headline {
+      font-size: 1.75rem;
+    }
+    .article-lead {
+      font-size: 1rem;
+    }
+    .article-body-content {
+      font-size: 1rem;
+      line-height: 1.7;
+    }
+  }
+</style>
+
+<script is:inline>
+  document.getElementById("btn-copy-link")?.addEventListener("click", function () {
+    navigator.clipboard.writeText(window.location.href).then(function () {
+      const statusText = document.getElementById("copy-status-text");
+      if (statusText) {
+        statusText.textContent = "Tersalin!";
+        setTimeout(() => (statusText.textContent = "Salin Tautan"), 2000);
+      }
+    });
+  });
+</script>

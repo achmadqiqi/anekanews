@@ -3,92 +3,382 @@ import type { PublicPost } from "../lib/content";
 
 interface Props {
   post: PublicPost;
-  variant?: "featured-main" | "featured-side" | "horizontal" | "grid" | "most-read";
-  rank?: number;
+  variant?: "bento-main" | "bento-side" | "horizontal" | "grid" | "compact";
 }
 
 const { post, variant = "grid" } = Astro.props;
 
-function getChannelColor(channel: string): string {
-  switch (channel.toLowerCase()) {
-    case "olahraga": return "linear-gradient(135deg, #8d1212, #e4502f)";
-    case "teknologi": return "linear-gradient(135deg, #14245f, #2c73da)";
-    case "rumah-properti":
-    case "properti": return "linear-gradient(135deg, #07525d, #17a1a1)";
-    case "bisnis": return "linear-gradient(135deg, #66420a, #d28a18)";
-    case "gaya-hidup": return "linear-gradient(135deg, #55307b, #a0549c)";
-    default: return "linear-gradient(135deg, #AF000F, #580006)";
-  }
-}
-
-const gradientBg = getChannelColor(post.channel);
 const formattedDate = new Date(post.publishedAt).toLocaleDateString("id-ID", {
   day: "numeric",
   month: "short",
-  year: "numeric"
+  year: "numeric",
 });
 ---
 
-{variant === "most-read" && (
-  <article class="most-read-item">
-    <div class="most-read-copy">
-      <span class="most-read-category">{post.channel}</span>
-      <a href={`/artikel/${post.slug}`} class="most-read-title">
-        {post.title}
+{variant === "bento-main" && (
+  <article class="card-bento-main">
+    <a href={`/artikel/${post.slug}`} class="bento-visual-link">
+      {post.image_url ? (
+        <img src={post.image_url} alt={post.title} loading="eager" fetchpriority="high" class="bento-img" />
+      ) : (
+        <div class="bento-placeholder-visual"><span>{post.channel}</span></div>
+      )}
+    </a>
+    <div class="bento-content">
+      <span class="category-eyebrow">{post.channel}</span>
+      <a href={`/artikel/${post.slug}`}>
+        <h2 class="bento-main-title">{post.title}</h2>
       </a>
+      <p class="bento-main-excerpt">{post.excerpt}</p>
+      <div class="card-meta-line">
+        <span>{post.author}</span>
+        <span>•</span>
+        <time>{formattedDate}</time>
+      </div>
     </div>
   </article>
 )}
 
-{variant === "featured-main" && (
-  <article class="hero-main-card">
-    <a href={`/artikel/${post.slug}`} class="hero-visual-wrap" style={`background: ${gradientBg};`}>
-      {post.image_url && <img src={post.image_url} alt={post.title} loading="lazy" />}
-      <span class="hero-pill-badge">{post.channel}</span>
+{variant === "bento-side" && (
+  <article class="card-bento-side">
+    <a href={`/artikel/${post.slug}`} class="side-thumb-link">
+      {post.image_url ? (
+        <img src={post.image_url} alt={post.title} loading="lazy" class="side-thumb-img" />
+      ) : (
+        <div class="side-placeholder-thumb"><span>{post.channel}</span></div>
+      )}
     </a>
-    <a href={`/artikel/${post.slug}`}>
-      <h2 class="hero-main-title">{post.title}</h2>
-    </a>
-    <p class="hero-main-excerpt">{post.excerpt}</p>
-  </article>
-)}
-
-{variant === "featured-side" && (
-  <article class="side-card">
-    <a href={`/artikel/${post.slug}`} class="side-visual-wrap" style={`background: ${gradientBg};`}>
-      {post.image_url && <img src={post.image_url} alt={post.title} loading="lazy" />}
-      <span class="side-pill-badge">{post.channel}</span>
-    </a>
-    <a href={`/artikel/${post.slug}`}>
-      <h3 class="side-card-title">{post.title}</h3>
-    </a>
+    <div class="side-content">
+      <span class="category-eyebrow">{post.channel}</span>
+      <a href={`/artikel/${post.slug}`}>
+        <h3 class="side-title">{post.title}</h3>
+      </a>
+      <time class="side-time">{formattedDate}</time>
+    </div>
   </article>
 )}
 
 {variant === "horizontal" && (
-  <article class="horizontal-card">
-    <a href={`/artikel/${post.slug}`} class="horizontal-visual" style={`background: ${gradientBg};`}>
-      {post.image_url && <img src={post.image_url} alt={post.title} loading="lazy" />}
+  <article class="card-horizontal">
+    <a href={`/artikel/${post.slug}`} class="horiz-thumb-link">
+      {post.image_url ? (
+        <img src={post.image_url} alt={post.title} loading="lazy" class="horiz-img" />
+      ) : (
+        <div class="horiz-placeholder"><span>{post.channel}</span></div>
+      )}
     </a>
-    <div class="horizontal-content">
+    <div class="horiz-content">
       <span class="category-eyebrow">{post.channel}</span>
       <a href={`/artikel/${post.slug}`}>
-        <h3 class="horizontal-title">{post.title}</h3>
+        <h3 class="horiz-title">{post.title}</h3>
       </a>
-      <p class="horizontal-excerpt">{post.excerpt}</p>
+      <p class="horiz-excerpt">{post.excerpt}</p>
+      <time class="horiz-date">{formattedDate}</time>
     </div>
   </article>
 )}
 
 {variant === "grid" && (
-  <article class="grid-card">
-    <a href={`/artikel/${post.slug}`} class="grid-visual-wrap" style={`background: ${gradientBg};`}>
-      {post.image_url && <img src={post.image_url} alt={post.title} loading="lazy" />}
+  <article class="card-grid-item">
+    <a href={`/artikel/${post.slug}`} class="grid-thumb-link">
+      {post.image_url ? (
+        <img src={post.image_url} alt={post.title} loading="lazy" class="grid-img" />
+      ) : (
+        <div class="grid-placeholder"><span>{post.channel}</span></div>
+      )}
     </a>
-    <span class="category-eyebrow">{post.channel}</span>
-    <a href={`/artikel/${post.slug}`}>
-      <h3 class="grid-card-title">{post.title}</h3>
-    </a>
-    <div class="card-meta">{formattedDate}</div>
+    <div class="grid-content">
+      <span class="category-eyebrow">{post.channel}</span>
+      <a href={`/artikel/${post.slug}`}>
+        <h3 class="grid-title">{post.title}</h3>
+      </a>
+      <time class="grid-date">{formattedDate}</time>
+    </div>
   </article>
 )}
+
+<style>
+  /* Bento Main Story */
+  .card-bento-main {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background-color: #ffffff;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    overflow: hidden;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+  .card-bento-main:hover {
+    border-color: var(--color-accent);
+    box-shadow: 0 10px 25px -5px rgba(37, 99, 235, 0.1);
+  }
+  .bento-visual-link {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    background-color: var(--color-surface);
+  }
+  .bento-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+  .card-bento-main:hover .bento-img {
+    transform: scale(1.02);
+  }
+  .bento-placeholder-visual {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, var(--color-primary), var(--color-primary-soft));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+  .bento-content {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+  .bento-main-title {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--color-primary);
+    line-height: 1.3;
+    margin-bottom: 0.75rem;
+    transition: color 0.15s ease;
+  }
+  .card-bento-main:hover .bento-main-title {
+    color: var(--color-accent);
+  }
+  .bento-main-excerpt {
+    font-size: 0.95rem;
+    color: var(--color-text-muted);
+    line-height: 1.6;
+    margin-bottom: 1.25rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .card-meta-line {
+    margin-top: auto;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8rem;
+    color: var(--color-text-muted);
+    font-weight: 500;
+  }
+
+  /* Bento Side Story */
+  .card-bento-side {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    padding: 0.85rem;
+    background-color: #ffffff;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    transition: border-color 0.2s ease;
+  }
+  .card-bento-side:hover {
+    border-color: var(--color-accent);
+  }
+  .side-thumb-link {
+    width: 100px;
+    height: 75px;
+    flex-shrink: 0;
+    border-radius: 6px;
+    overflow: hidden;
+    background-color: var(--color-surface);
+  }
+  .side-thumb-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .side-placeholder-thumb {
+    width: 100%;
+    height: 100%;
+    background: var(--color-primary-soft);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    font-size: 0.6rem;
+    font-weight: 800;
+    text-transform: uppercase;
+  }
+  .side-content {
+    display: flex;
+    flex-direction: column;
+  }
+  .side-title {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--color-primary);
+    line-height: 1.35;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    transition: color 0.15s ease;
+  }
+  .card-bento-side:hover .side-title {
+    color: var(--color-accent);
+  }
+  .side-time {
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+    margin-top: 0.35rem;
+  }
+
+  /* Horizontal Card */
+  .card-horizontal {
+    display: flex;
+    gap: 1.5rem;
+    background: #ffffff;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    padding: 1.25rem;
+    margin-bottom: 1.5rem;
+    transition: border-color 0.2s ease;
+  }
+  .card-horizontal:hover {
+    border-color: var(--color-accent);
+  }
+  .horiz-thumb-link {
+    width: 240px;
+    aspect-ratio: 16 / 9;
+    flex-shrink: 0;
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  .horiz-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .horiz-placeholder {
+    width: 100%;
+    height: 100%;
+    background: var(--color-primary);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+  }
+  .horiz-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .horiz-title {
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: var(--color-primary);
+    line-height: 1.35;
+    margin-bottom: 0.5rem;
+    transition: color 0.15s ease;
+  }
+  .card-horizontal:hover .horiz-title {
+    color: var(--color-accent);
+  }
+  .horiz-excerpt {
+    font-size: 0.88rem;
+    color: var(--color-text-muted);
+    line-height: 1.5;
+    margin-bottom: 0.75rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .horiz-date {
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+  }
+
+  /* Grid Card Item */
+  .card-grid-item {
+    display: flex;
+    flex-direction: column;
+    background: #ffffff;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    overflow: hidden;
+    transition: border-color 0.2s ease;
+  }
+  .card-grid-item:hover {
+    border-color: var(--color-accent);
+  }
+  .grid-thumb-link {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+  }
+  .grid-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+  .card-grid-item:hover .grid-img {
+    transform: scale(1.02);
+  }
+  .grid-placeholder {
+    width: 100%;
+    height: 100%;
+    background: var(--color-primary);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+  }
+  .grid-content {
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+  .grid-title {
+    font-size: 1rem;
+    font-weight: 800;
+    color: var(--color-primary);
+    line-height: 1.35;
+    margin-bottom: 0.5rem;
+    transition: color 0.15s ease;
+  }
+  .card-grid-item:hover .grid-title {
+    color: var(--color-accent);
+  }
+  .grid-date {
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+    margin-top: auto;
+  }
+
+  @media (max-width: 768px) {
+    .card-horizontal {
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .horiz-thumb-link {
+      width: 100%;
+    }
+  }
+</style>

@@ -13,26 +13,86 @@ try {
 } catch {
   return Astro.redirect("/404");
 }
-const posts = await getPublicPosts((env as any).DB, channel.slug);
+
+const posts = await getPublicPosts((env as any).DB, channel.slug).catch(() => []);
+const featuredCategoryPost = posts[0];
+const remainingCategoryPosts = posts.slice(1);
 ---
 
-<BaseLayout title={channel.name} description={channel.description}>
-  <div style="padding-top: 1.5rem;">
-    <Breadcrumb items={[{ label: "Kanal" }, { label: channel.name }]} />
+<BaseLayout title={`Kanal ${channel.name}`} description={channel.description}>
+  <div class="main-container category-page-wrapper">
+    <!-- Breadcrumb Navigation -->
+    <Breadcrumb items={[{ label: "Kanal Berita" }, { label: channel.name }]} />
+
+    <!-- Category Header -->
+    <header class="category-page-header">
+      <span class="category-eyebrow">KANAL BERITA</span>
+      <h1 class="category-page-title">{channel.name}</h1>
+      <p class="category-page-desc">{channel.description}</p>
+    </header>
+
+    {posts.length > 0 ? (
+      <section class="category-posts-section">
+        <!-- Featured Horizontal Article -->
+        {featuredCategoryPost && (
+          <div class="category-featured-wrapper">
+            <ArticleCard post={featuredCategoryPost} variant="horizontal" />
+          </div>
+        )}
+
+        <!-- Grid Articles -->
+        {remainingCategoryPosts.length > 0 && (
+          <div class="grid-3col">
+            {remainingCategoryPosts.map((post) => (
+              <ArticleCard post={post} variant="grid" />
+            ))}
+          </div>
+        )}
+
+        <!-- Pagination -->
+        {posts.length > 6 && (
+          <Pagination currentPage={1} totalPages={Math.ceil(posts.length / 6)} baseUrl={`/kategori/${channel.slug}`} />
+        )}
+      </section>
+    ) : (
+      <div class="category-empty-state">
+        <p>Belum ada artikel publikasi di kanal {channel.name}.</p>
+      </div>
+    )}
   </div>
-
-  <header class="archive-heading">
-    <span>Kanal Berita</span>
-    <h1>{channel.name}</h1>
-    <p>{channel.description}</p>
-  </header>
-
-  <section class="category-section" style="margin-top: 2rem;">
-    <div class="grid-3col">
-      {posts.map((post) => <ArticleCard {post} variant="grid" />)}
-    </div>
-
-    <!-- Pagination Navigation -->
-    <Pagination currentPage={1} totalPages={2} baseUrl={`/kategori/${channel.slug}`} />
-  </section>
 </BaseLayout>
+
+<style>
+  .category-page-wrapper {
+    padding: 2rem 1.25rem 4rem;
+  }
+  .category-page-header {
+    margin: 1.5rem 0 2.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid var(--color-primary);
+  }
+  .category-page-title {
+    font-size: 2.25rem;
+    font-weight: 900;
+    color: var(--color-primary);
+    margin: 0.25rem 0 0.5rem;
+    text-transform: uppercase;
+  }
+  .category-page-desc {
+    font-size: 1.05rem;
+    color: var(--color-text-muted);
+    max-width: 720px;
+    line-height: 1.5;
+  }
+  .category-featured-wrapper {
+    margin-bottom: 2.5rem;
+  }
+  .category-empty-state {
+    padding: 4rem 1rem;
+    text-align: center;
+    background-color: var(--color-surface);
+    border: 1px dashed var(--color-border);
+    border-radius: 8px;
+    color: var(--color-text-muted);
+  }
+</style>

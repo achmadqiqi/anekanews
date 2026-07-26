@@ -1,107 +1,180 @@
 ---
 import { env } from "cloudflare:workers";
+import AdSlot from "../components/AdSlot.astro";
 import ArticleCard from "../components/ArticleCard.astro";
-import Pagination from "../components/Pagination.astro";
+import TopicChips from "../components/TopicChips.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { CHANNELS } from "../lib/channels";
 import { getPublicPosts } from "../lib/content";
 
-const posts = await getPublicPosts((env as any).DB).catch(() => []);
+const posts = await getPublicPosts((env as any).DB);
 
-// Hero items
-const featured = posts.find((post) => post.featured) ?? posts[0] ?? {
-  title: "Selamat Datang di AnekaNews",
-  slug: "welcome",
-  excerpt: "Portal berita dan informasi terpercaya seputar olahraga, teknologi, bisnis, dan gaya hidup.",
-  body: "",
-  channel: "Teknologi",
-  tags: [],
-  sources: [],
-  publishedAt: new Date(),
-  author: "Redaksi AnekaNews",
-  readingMinutes: 5,
-  featured: true
-};
+// Controlled Editorial Bento Hero Selection
+const featured = posts[0];
+const sideHighlights = posts.slice(1, 4);
+const remainingPosts = posts.slice(4);
 
-const mostRead = posts.slice(0, 5);
-const sideHighlights = posts.filter((p) => p.slug !== featured.slug).slice(0, 2);
-const remainingPosts = posts.filter((p) => p.slug !== featured.slug);
+// Sort channel sections by editorial priority
+const ORDERED_SLUGS = ["properti", "olahraga", "teknologi", "bisnis", "gaya-hidup"];
+const orderedChannels = ORDERED_SLUGS.map((slug) =>
+  CHANNELS.find((c) => c.slug === slug)
+).filter((c): c is typeof CHANNELS[number] => Boolean(c));
 
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "WebSite",
   name: "AnekaNews",
   url: "https://anekanews.com",
-  inLanguage: "id-ID",
+  description: "Kabar hari ini & berita terkini seputar olahraga, teknologi, properti, bisnis, dan gaya hidup.",
 };
 ---
 
 <BaseLayout
   title="AnekaNews - Kabar Hari Ini & Berita Terkini"
-  description="Beragam informasi tepercaya tentang olahraga, teknologi, properti, bisnis, dan gaya hidup."
+  description="Beragam informasi tepercaya tentang rumah & properti, olahraga, teknologi, bisnis, dan gaya hidup."
   {jsonLd}
 >
-  <!-- Red Gradient Hero Section (kivalinacity.com style) -->
-  <section class="hero-section" id="terbaru">
-    <div class="hero-grid">
-      <!-- Most Read 1-5 (Left Column) -->
-      <div class="most-read-col">
-        <div class="most-read-header">
-          <h2>TERPOPULER</h2>
-        </div>
-        {mostRead.map((post, idx) => (
-          <ArticleCard post={post} variant="most-read" rank={idx + 1} />
-        ))}
-      </div>
-
-      <!-- Main Featured Story (Center Column) -->
-      <div>
-        <ArticleCard post={featured} variant="featured-main" />
-      </div>
-
-      <!-- Side Highlights (Right Column) -->
-      <div class="side-highlights-col">
-        {sideHighlights.map((post) => (
-          <ArticleCard post={post} variant="featured-side" />
-        ))}
-      </div>
-    </div>
-  </section>
-
-  <!-- Category Block Sections -->
-  {CHANNELS.map((channel) => {
-    const channelPosts = remainingPosts.filter(
-      (p) => p.channel.toLowerCase() === channel.name.toLowerCase() || p.channel.toLowerCase() === channel.slug.toLowerCase()
-    );
-    if (channelPosts.length === 0) return null;
-
-    const topHorizontal = channelPosts[0];
-    const gridItems = channelPosts.slice(1, 4);
-
-    return (
-      <section class="category-section" id={channel.slug}>
-        <div class="category-section-header">
-          <h2>
-            <a href={`/kategori/${channel.slug}`}>{channel.name}</a>
-            <span>›</span>
-          </h2>
-        </div>
-
-        {topHorizontal && (
-          <ArticleCard post={topHorizontal} variant="horizontal" />
-        )}
-
-        {gridItems.length > 0 && (
-          <div class="grid-3col">
-            {gridItems.map((post) => (
-              <ArticleCard post={post} variant="grid" />
-            ))}
+  <!-- Hero Section: Controlled Editorial Bento -->
+  {featured && (
+    <section class="hero-bento-section">
+      <div class="main-container">
+        <div class="bento-hero-grid">
+          <!-- Main Story (65% width) -->
+          <div class="bento-main-col">
+            <ArticleCard post={featured} variant="bento-main" />
           </div>
-        )}
-      </section>
-    );
-  })}
 
-  <!-- Content Pagination Navigation -->
-  <Pagination currentPage={1} totalPages={3} baseUrl="" />
+          <!-- Side Highlights List (35% width) -->
+          <div class="bento-side-col">
+            <div class="side-col-header">
+              <h3>SOROTAN PILLIAN REDAKSI</h3>
+            </div>
+            <div class="side-list-wrapper">
+              {sideHighlights.map((post) => (
+                <ArticleCard post={post} variant="bento-side" />
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  )}
+
+  <!-- Topic Chips Bar -->
+  <TopicChips />
+
+  <!-- Ad Space Placeholder (Hidden if AdSense is disabled) -->
+  <div class="main-container">
+    <AdSlot slotId="home-top-banner" format="horizontal" />
+  </div>
+
+  <!-- Category Block Sections (Ordered by Editorial Priority) -->
+  <div class="main-container category-blocks-container">
+    {orderedChannels.map((channel) => {
+      const channelPosts = remainingPosts.filter(
+        (p) =>
+          p.channel.toLowerCase() === channel.name.toLowerCase() ||
+          p.channel.toLowerCase() === channel.slug.toLowerCase()
+      );
+
+      if (channelPosts.length === 0) return null;
+
+      const topHorizontal = channelPosts[0];
+      const gridItems = channelPosts.slice(1, 4);
+
+      return (
+        <section class="category-block-section" id={channel.slug}>
+          <div class="category-block-header">
+            <h2>{channel.name}</h2>
+            <a href={`/kategori/${channel.slug}`} class="cat-link-all">
+              Lihat Semua {channel.name} ›
+            </a>
+          </div>
+
+          {topHorizontal && (
+            <ArticleCard post={topHorizontal} variant="horizontal" />
+          )}
+
+          {gridItems.length > 0 && (
+            <div class="grid-3col">
+              {gridItems.map((post) => (
+                <ArticleCard post={post} variant="grid" />
+              ))}
+            </div>
+          )}
+        </section>
+      );
+    })}
+  </div>
 </BaseLayout>
+
+<style>
+  /* Bento Hero Section */
+  .hero-bento-section {
+    padding: 1.5rem 0;
+    background-color: var(--color-background);
+  }
+  .bento-hero-grid {
+    display: grid;
+    grid-template-columns: 65% 1fr;
+    gap: 1.5rem;
+    align-items: stretch;
+  }
+  .bento-side-col {
+    display: flex;
+    flex-direction: column;
+  }
+  .side-col-header {
+    margin-bottom: 0.85rem;
+  }
+  .side-col-header h3 {
+    font-size: 0.8rem;
+    font-weight: 800;
+    color: var(--color-text-muted);
+    letter-spacing: 0.08em;
+  }
+  .side-list-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+    flex: 1;
+  }
+
+  /* Category Block Sections */
+  .category-blocks-container {
+    padding: 2rem 1.25rem;
+  }
+  .category-block-section {
+    margin-bottom: 3rem;
+  }
+  .category-block-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.25rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--color-primary);
+  }
+  .category-block-header h2 {
+    font-size: 1.35rem;
+    font-weight: 900;
+    color: var(--color-primary);
+    text-transform: uppercase;
+  }
+  .cat-link-all {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--color-accent);
+    transition: color 0.15s ease;
+  }
+  .cat-link-all:hover {
+    color: var(--color-accent-hover);
+    text-decoration: underline;
+  }
+
+  @media (max-width: 960px) {
+    .bento-hero-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

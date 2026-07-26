@@ -1,19 +1,59 @@
 ---
 import { CHANNELS } from "../lib/channels";
+
+const currentPath = Astro.url.pathname;
 ---
 
-<div class="category-subnav">
+<nav class="category-nav" aria-label="Kanal Utama">
   <div class="main-container">
-    <div class="category-subnav-inner">
-      <span class="subnav-label">Navigasi Konten:</span>
-      <div class="subnav-links">
-        <a href="/#terbaru" class="subnav-item active">Semua Konten</a>
-        {CHANNELS.map((channel) => (
-          <a href={`/kategori/${channel.slug}`} class="subnav-item">
+    <div class="category-nav-inner">
+      <a href="/" class={`cat-nav-link ${currentPath === "/" ? "active" : ""}`}>
+        Terbaru
+      </a>
+      {CHANNELS.map((channel) => {
+        const isActive = currentPath === `/kategori/${channel.slug}`;
+        return (
+          <a href={`/kategori/${channel.slug}`} class={`cat-nav-link ${isActive ? "active" : ""}`}>
             {channel.name}
           </a>
-        ))}
-      </div>
+        );
+      })}
     </div>
   </div>
-</div>
+</nav>
+
+<style>
+  .category-nav {
+    background-color: #ffffff;
+    border-bottom: 1px solid var(--color-border);
+  }
+  .category-nav-inner {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    padding: 0.5rem 0;
+  }
+  .category-nav-inner::-webkit-scrollbar {
+    display: none;
+  }
+  .cat-nav-link {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--color-text);
+    padding: 0.4rem 0.85rem;
+    border-radius: 4px;
+    white-space: nowrap;
+    transition: all 0.15s ease;
+  }
+  .cat-nav-link:hover {
+    background-color: var(--color-surface);
+    color: var(--color-accent);
+  }
+  .cat-nav-link.active {
+    background-color: var(--color-primary);
+    color: #ffffff;
+  }
+</style>

@@ -12,6 +12,7 @@ export interface PublicPost {
   featured?: boolean;
   image_url?: string;
   images?: { image_url: string; alt_text?: string | null }[];
+  sources?: { title?: string; url: string }[];
 }
 
 export const DEMO_POSTS: readonly PublicPost[] = [
@@ -49,42 +50,28 @@ export const DEMO_POSTS: readonly PublicPost[] = [
     slug: "kolam-renang-rumah-perlu-direncanakan-sejak-awal",
     title: "Mengapa Kolam Renang Rumah Perlu Direncanakan Sejak Awal",
     excerpt:
-      "Struktur, sirkulasi, ruang mesin, dan akses perawatan harus menjadi satu kesatuan perencanaan.",
-    channel: "rumah-properti",
+      "Struktur, sirkulasi air, dan keamanan anak menjadi tiga pilar penting sebelum penggalian dimulai.",
+    channel: "properti",
     publishedAt: new Date("2026-07-22T08:00:00+07:00"),
     author: "Redaksi AnekaNews",
     readingMinutes: 7,
     body: [
-      "Kolam renang merupakan bagian bangunan yang menampung air secara terus-menerus. Karena itu, keputusan desain tidak sebaiknya dilakukan setelah struktur rumah selesai.",
-      "Ruang mesin, jalur perpipaan, akses teknisi, elevasi, dan pembuangan air perlu dibahas sejak tahap perencanaan.",
+      "Kolam renang pribadi di hunian menambah kenyamanan sekaligus nilai properti jika direncanakan secara teknis.",
+      "Pertimbangan beban tanah, akses pipa sirkulasi, dan pagar pengaman wajib dipikirkan sebelum konstruksi.",
     ],
   },
   {
-    slug: "membaca-arus-kas-usaha-dengan-sederhana",
-    title: "Cara Sederhana Membaca Arus Kas Sebelum Usaha Kehabisan Napas",
+    slug: "tren-olahraga-padel-di-kota-besar",
+    title: "Tren Olahraga Padel: Mengapa Cabang Ini Cepat Populer",
     excerpt:
-      "Laba di atas kertas tidak selalu berarti uang tunai tersedia untuk membayar kebutuhan operasional.",
-    channel: "bisnis",
+      "Kemudahan mempelajari ritme permainan membuat padel diminati berbagai kelompok usia.",
+    channel: "olahraga",
     publishedAt: new Date("2026-07-21T08:00:00+07:00"),
-    author: "Redaksi AnekaNews",
-    readingMinutes: 5,
-    body: [
-      "Arus kas menunjukkan kapan uang masuk dan keluar. Catatan sederhana yang diperbarui rutin sering lebih berguna daripada laporan rumit yang terlambat.",
-      "Pemilik usaha perlu memisahkan uang pribadi, biaya operasional, kewajiban, dan dana pengembangan.",
-    ],
-  },
-  {
-    slug: "membuat-rumah-nyaman-untuk-keluarga-muda",
-    title: "Membuat Rumah Lebih Nyaman untuk Keluarga Muda",
-    excerpt:
-      "Ruang yang mudah dirawat, aman, dan fleksibel sering lebih berharga daripada dekorasi yang berlebihan.",
-    channel: "gaya-hidup",
-    publishedAt: new Date("2026-07-20T08:00:00+07:00"),
     author: "Redaksi AnekaNews",
     readingMinutes: 4,
     body: [
-      "Kebutuhan rumah keluarga berubah cepat. Area bermain hari ini dapat berubah menjadi area belajar atau ruang kerja beberapa tahun kemudian.",
-      "Sirkulasi yang jelas, penyimpanan yang cukup, pencahayaan alami, dan material yang mudah dibersihkan membantu rumah tetap nyaman.",
+      "Padel kombinasi tenis dan skuasy dengan dinding kaca yang membuat bola tetap dimainkan.",
+      "Lapangan yang lebih ringkas memungkinkan interaksi sosial yang lebih hangat di antara pemain.",
     ],
   },
 ];
@@ -107,6 +94,7 @@ interface ArticleRow {
   author: string;
   published_at: string;
   image_url?: string | null;
+  sources_json?: string | null;
 }
 
 function parseSafeDate(dateStr: string): Date {
@@ -130,6 +118,16 @@ function rowToPost(row: ArticleRow): PublicPost {
       .map((paragraph) => paragraph.trim())
       .filter(Boolean);
   }
+
+  let sources: { title?: string; url: string }[] | undefined;
+  if (row.sources_json) {
+    try {
+      sources = JSON.parse(row.sources_json);
+    } catch {
+      sources = undefined;
+    }
+  }
+
   return {
     slug: row.slug,
     title: row.title,
@@ -139,6 +137,7 @@ function rowToPost(row: ArticleRow): PublicPost {
     author: row.author || "Redaksi AnekaNews",
     publishedAt: parseSafeDate(row.published_at),
     image_url: row.image_url || undefined,
+    sources,
     readingMinutes: Math.max(
       1,
       Math.ceil((Array.isArray(body) ? body.join(" ") : row.body).trim().split(/\s+/u).length / 200),
@@ -156,13 +155,13 @@ export async function getPublicPosts(
   const query = channel
     ? db
         .prepare(
-          `SELECT slug, title, excerpt, body, channel, author, published_at, image_url
+          `SELECT slug, title, excerpt, body, channel, author, published_at, image_url, sources_json
            FROM published_articles WHERE channel = ?
            ORDER BY published_at DESC LIMIT 50`,
         )
         .bind(channel)
     : db.prepare(
-        `SELECT slug, title, excerpt, body, channel, author, published_at, image_url
+        `SELECT slug, title, excerpt, body, channel, author, published_at, image_url, sources_json
          FROM published_articles ORDER BY published_at DESC LIMIT 50`,
       );
   const result = await query.all<ArticleRow>();
@@ -177,7 +176,7 @@ export async function getPublicPost(
   if (!db) return getPost(slug);
   const row = await db
     .prepare(
-      `SELECT slug, title, excerpt, body, channel, author, published_at, image_url
+      `SELECT slug, title, excerpt, body, channel, author, published_at, image_url, sources_json
        FROM published_articles WHERE slug = ? LIMIT 1`,
     )
     .bind(slug)
