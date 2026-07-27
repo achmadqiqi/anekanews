@@ -15,8 +15,12 @@
       "database_id": "e4f6f6e7-63c4-4c0d-ad37-0ebe7e96ded6"
     }
   ],
-
-
+  "r2_buckets": [
+    {
+      "binding": "MEDIA",
+      "bucket_name": "anekanews-media"
+    }
+  ],
   "kv_namespaces": [
     {
       "binding": "CACHE",
