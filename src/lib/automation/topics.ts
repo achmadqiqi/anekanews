@@ -21,6 +21,10 @@ const TOPICS: Record<string, readonly string[]> = {
     "Membuat rumah nyaman dan fleksibel untuk keluarga muda",
     "Kebiasaan sederhana untuk menjaga keseimbangan aktivitas harian",
   ],
+  kuliner: [
+    "Resep kuliner khas nusantara dan tips bisnis usaha makanan",
+    "Tren industri F&B dan panduan higienitas produk kuliner",
+  ],
 };
 
 const SOURCES: Record<string, readonly string[]> = {
@@ -43,6 +47,10 @@ const SOURCES: Record<string, readonly string[]> = {
   "gaya-hidup": [
     "https://ayosehat.kemkes.go.id/",
     "https://www.who.int/health-topics/physical-activity",
+  ],
+  kuliner: [
+    "https://www.kemenparekraf.go.id/",
+    "https://www.pom.go.id/",
   ],
 };
 

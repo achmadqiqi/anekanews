@@ -40,6 +40,12 @@ export const CHANNELS: readonly Channel[] = [
     description: "Kehidupan, keluarga, perjalanan, dan inspirasi.",
     accent: "#7c3aed",
   },
+  {
+    slug: "kuliner",
+    name: "Kuliner",
+    description: "Resep, kuliner nusantara, kafe, resto, dan tren makanan.",
+    accent: "#ea580c",
+  },
 ];
 
 export function getChannel(slug: string): Channel {
