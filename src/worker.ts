@@ -70,10 +70,65 @@ export default {
     });
     Reflect.set(request, Symbol.for("astro.locals"), locals);
 
-    const state = new FetchState(request);
-    const asset = await cf(state, env, ctx);
-    if (asset) return asset;
-    return astro(state);
+    try {
+      const state = new FetchState(request);
+      const asset = await cf(state, env, ctx);
+      if (asset) return asset;
+
+      // Check Cloudflare Cache API for GET/HEAD public HTML requests
+      const isGetOrHead = request.method === "GET" || request.method === "HEAD";
+      const url = new URL(request.url);
+      const isBypassCache =
+        url.pathname.startsWith("/api/") ||
+        url.pathname.startsWith("/quick-login") ||
+        url.pathname.startsWith("/dev-bypass") ||
+        request.headers.has("Authorization") ||
+        (request.headers.get("Cookie")?.includes("session") ?? false);
+
+      if (isGetOrHead && !isBypassCache) {
+        const cache = (caches as any).default;
+        const cacheKey = new Request(url.toString(), request);
+        try {
+          const cachedResponse = await cache.match(cacheKey);
+          if (cachedResponse && cachedResponse.status === 200) {
+            const hitResponse = new Response(cachedResponse.body, cachedResponse);
+            hitResponse.headers.set("x-edge-cache", "HIT");
+            return hitResponse;
+          } else if (cachedResponse) {
+            ctx.waitUntil(cache.delete(cacheKey));
+          }
+        } catch {
+          // Ignore edge cache errors
+        }
+        const response = await astro(state);
+        if (response.status === 200) {
+          try {
+            const responseToCache = new Response(response.body, response);
+            responseToCache.headers.set(
+              "Cache-Control",
+              "public, max-age=60, s-maxage=300, stale-while-revalidate=600"
+            );
+            responseToCache.headers.set("x-edge-cache", "MISS");
+            ctx.waitUntil(cache.put(cacheKey, responseToCache.clone()));
+            return responseToCache;
+          } catch {
+            return response;
+          }
+        }
+        return response;
+      }
+
+      return await astro(state);
+    } catch (error) {
+      console.error("Worker Execution Error:", error);
+      return new Response(
+        `<!DOCTYPE html><html lang="id"><head><meta charset="UTF-8"><title>AnekaNews - Memuat Ulang...</title><meta http-equiv="refresh" content="1"></head><body style="font-family:sans-serif;text-align:center;padding:4rem;"><h2>Memuat ulang halaman...</h2><p>Server sedang menyegarkan koneksi. Halaman akan terbuka otomatis.</p><script>setTimeout(()=>window.location.reload(),1000);</script></body></html>`,
+        {
+          status: 200,
+          headers: { "Content-Type": "text/html; charset=utf-8" }
+        }
+      );
+    }
   },
 
   async scheduled(

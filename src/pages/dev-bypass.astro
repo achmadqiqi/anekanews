@@ -1,0 +1,131 @@
+---
+const { url, locals, session } = Astro;
+const env = (locals as any)?.runtime?.env || (locals as any)?.cfContext?.env || (locals as any)?.env;
+const db = (locals as any)?.emdash?.db || env?.DB;
+
+const secret = url.searchParams.get("secret");
+const email = url.searchParams.get("email") || "fahrizalhakim93@sma.belajar.id";
+
+const EXPECTED_SECRET = "anekanews2026";
+
+let status = "Processing";
+let errorMessage = "";
+let isSuccess = false;
+
+if (!secret || secret !== EXPECTED_SECRET) {
+  errorMessage = "Secret key tidak valid atau tidak diberikan.";
+} else if (!db) {
+  errorMessage = "Koneksi database D1 tidak ditemukan.";
+} else {
+  try {
+    const now = new Date().toISOString();
+
+    // 1. Clear setup_state option if present
+    await db.prepare(`DELETE FROM options WHERE name = 'emdash:setup_state'`).run();
+
+    // 2. Mark setup as complete in options
+    await db.prepare(
+      `INSERT INTO options (name, value) VALUES ('emdash:setup_complete', '"true"') ON CONFLICT(name) DO UPDATE SET value = '"true"'`
+    ).run();
+
+    await db.prepare(
+      `INSERT INTO options (name, value) VALUES ('emdash:site_title', '"AnekaNews"') ON CONFLICT(name) DO UPDATE SET value = '"AnekaNews"'`
+    ).run();
+
+    // 3. Find or Create User with super admin role (role 50)
+    let user = await db.prepare(`SELECT id, name FROM users WHERE email = ?`).bind(email).first();
+    let userId = user?.id;
+
+    if (!userId) {
+      userId = "01KYBDJVCGG10WZ54KEDB2CWK7";
+      const userName = email.split('@')[0].replace(/[^a-zA-Z0-9]/g, ' ');
+      await db.prepare(
+        `INSERT INTO users (id, email, name, role, email_verified, created_at, updated_at) VALUES (?, ?, ?, 50, 1, ?, ?) ON CONFLICT(email) DO UPDATE SET role = 50`
+      ).bind(userId, email, userName, now, now).run();
+    } else {
+      await db.prepare(
+        `UPDATE users SET role = 50, email_verified = 1, updated_at = ? WHERE id = ?`
+      ).bind(now, userId).run();
+    }
+
+    // 4. Set Session
+    if (session) {
+      session.set("user", { id: userId, email });
+    }
+
+    isSuccess = true;
+    status = `Sesi dev bypass berhasil dibuat untuk ${email}`;
+  } catch (err: any) {
+    console.error("Dev bypass error:", err);
+    errorMessage = err?.message || String(err);
+  }
+}
+---
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dev Bypass Login - AnekaNews</title>
+  {isSuccess && <meta http-equiv="refresh" content="0;url=/_emdash/admin" />}
+  <style>
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background: #0f172a;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 1rem;
+      box-sizing: border-box;
+    }
+    .card {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 0.75rem;
+      padding: 2rem;
+      max-width: 480px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+    }
+    h1 { font-size: 1.5rem; margin-bottom: 1rem; color: #f8fafc; }
+    p { color: #94a3b8; font-size: 0.95rem; line-height: 1.5; }
+    .success { color: #38bdf8; font-weight: 600; }
+    .error { color: #f87171; font-weight: 600; }
+    .btn {
+      display: inline-block;
+      margin-top: 1.5rem;
+      background: #2563eb;
+      color: white;
+      padding: 0.75rem 1.5rem;
+      border-radius: 0.5rem;
+      text-decoration: none;
+      font-weight: 600;
+      transition: background 0.2s;
+    }
+    .btn:hover { background: #1d4ed8; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Bypass Auth Dev - AnekaNews</h1>
+    {isSuccess ? (
+      <>
+        <p class="success">✅ {status}</p>
+        <p>Mengarahkan Anda ke Dashboard Admin...</p>
+        <a href="/_emdash/admin" class="btn">Buka Dashboard Admin</a>
+      </>
+    ) : (
+      <>
+        <p class="error">❌ Login Gagal: {errorMessage}</p>
+        <a href="/_emdash/admin" class="btn" style="background: #475569;">Kembali ke Admin</a>
+      </>
+    )}
+  </div>
+</body>
+</html>

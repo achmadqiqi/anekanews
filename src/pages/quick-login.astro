@@ -1,5 +1,5 @@
 ---
-const { locals, session, redirect } = Astro;
+const { locals, session } = Astro;
 const env = (locals as any)?.runtime?.env || (locals as any)?.cfContext?.env || (locals as any)?.env;
 const db = (locals as any)?.emdash?.db || env?.DB;
 

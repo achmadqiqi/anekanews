@@ -1,4 +1,3 @@
-import { CHANNELS } from "./channels";
 
 export interface PublicPost {
   slug: string;
@@ -108,6 +107,22 @@ function parseSafeDate(dateStr: string): Date {
   return isNaN(d.getTime()) ? new Date() : d;
 }
 
+function parseImageUrl(imageUrl: string | null | undefined, slug?: string): string | undefined {
+  if (!imageUrl) return undefined;
+  const trimmed = imageUrl.trim();
+  if (trimmed.startsWith("{")) {
+    try {
+      const parsed = JSON.parse(trimmed);
+      if (parsed.src && typeof parsed.src === "string") return parsed.src;
+      if (parsed.url && typeof parsed.url === "string") return parsed.url;
+    } catch {
+      // Ignore JSON parse errors
+    }
+    return slug ? `/images/${slug}.jpg` : "/images/harga-properti-naik-tren-rumah-hemat-milenial-2026.jpg";
+  }
+  return trimmed;
+}
+
 function rowToPost(row: ArticleRow): PublicPost {
   let body: string[] = [];
   if (typeof row.body === "string" && row.body.trim().startsWith("[")) {
@@ -140,7 +155,7 @@ function rowToPost(row: ArticleRow): PublicPost {
     channel: row.channel,
     author: row.author || "Redaksi AnekaNews",
     publishedAt: parseSafeDate(row.published_at),
-    image_url: row.image_url || undefined,
+    image_url: parseImageUrl(row.image_url, row.slug),
     sources,
     readingMinutes: Math.max(
       1,
@@ -163,12 +178,14 @@ export async function getPublicPosts(
       query = db.prepare(
         `SELECT slug, title, excerpt, body, channel, author, published_at, image_url, sources_json
          FROM published_articles WHERE channel IN ('properti', 'rumah-properti')
+           AND published_at <= datetime('now', '+7 hours')
          ORDER BY published_at DESC LIMIT 50`
       );
     } else if (channel === "gaya-hidup" || channel === "lifestyle") {
       query = db.prepare(
         `SELECT slug, title, excerpt, body, channel, author, published_at, image_url, sources_json
          FROM published_articles WHERE channel IN ('gaya-hidup', 'lifestyle')
+           AND published_at <= datetime('now', '+7 hours')
          ORDER BY published_at DESC LIMIT 50`
       );
     } else {
@@ -176,6 +193,7 @@ export async function getPublicPosts(
         .prepare(
           `SELECT slug, title, excerpt, body, channel, author, published_at, image_url, sources_json
            FROM published_articles WHERE channel = ?
+             AND published_at <= datetime('now', '+7 hours')
            ORDER BY published_at DESC LIMIT 50`,
         )
         .bind(channel);
@@ -183,7 +201,9 @@ export async function getPublicPosts(
   } else {
     query = db.prepare(
       `SELECT slug, title, excerpt, body, channel, author, published_at, image_url, sources_json
-       FROM published_articles ORDER BY published_at DESC LIMIT 50`,
+       FROM published_articles
+       WHERE published_at <= datetime('now', '+7 hours')
+       ORDER BY published_at DESC LIMIT 50`,
     );
   }
 
@@ -197,23 +217,113 @@ export async function getPublicPost(
   db?: D1Database,
 ): Promise<PublicPost | undefined> {
   if (!db) return getPost(slug);
-  const row = await db
+  const cleanSlug = slug.toLowerCase().trim().replace(/\/+$/, "");
+
+  // 1. Primary lookup in published_articles
+  let row = await db
     .prepare(
       `SELECT slug, title, excerpt, body, channel, author, published_at, image_url, sources_json
-       FROM published_articles WHERE slug = ? LIMIT 1`,
+       FROM published_articles WHERE LOWER(slug) = LOWER(?) LIMIT 1`,
     )
-    .bind(slug)
+    .bind(cleanSlug)
     .first<ArticleRow>();
-  if (!row) return getPost(slug);
+
+  // 2. Fallback lookup by LIKE pattern in published_articles
+  if (!row) {
+    row = await db
+      .prepare(
+        `SELECT slug, title, excerpt, body, channel, author, published_at, image_url, sources_json
+         FROM published_articles WHERE LOWER(slug) LIKE LOWER(?) LIMIT 1`,
+      )
+      .bind(`%${cleanSlug}%`)
+      .first<ArticleRow>();
+  }
+
+  // 3. Fallback lookup in ec_posts (Emdash CMS published posts) & auto-sync to published_articles
+  if (!row) {
+    try {
+      const ecRow = await db
+        .prepare(
+          `SELECT slug, title, excerpt, content, published_at, featured_image
+           FROM ec_posts WHERE LOWER(slug) = LOWER(?) AND status = 'published' LIMIT 1`,
+        )
+        .bind(cleanSlug)
+        .first<{
+          slug: string;
+          title: string;
+          excerpt: string | null;
+          content: string | null;
+          published_at: string | null;
+          featured_image: string | null;
+        }>();
+
+      if (ecRow) {
+        let paragraphs: string[] = [];
+        if (ecRow.content) {
+          try {
+            const parsed = JSON.parse(ecRow.content);
+            if (Array.isArray(parsed)) {
+              paragraphs = parsed
+                .filter((block: any) => block?._type === "block" && Array.isArray(block.children))
+                .map((block: any) => block.children.map((c: any) => c.text || "").join(""))
+                .filter((text: string) => text.trim().length > 0);
+            }
+          } catch {
+            paragraphs = [ecRow.content];
+          }
+        }
+        const bodyJson = JSON.stringify(paragraphs.length > 0 ? paragraphs : [ecRow.excerpt || ecRow.title]);
+        const excerptText = ecRow.excerpt || (paragraphs[0] ? paragraphs[0].slice(0, 150) : ecRow.title);
+        const pubAt = ecRow.published_at || new Date().toISOString();
+
+        // Auto-sync into published_articles
+        await db
+          .prepare(
+            `INSERT OR REPLACE INTO published_articles (
+              slug, title, excerpt, body, channel, tags_json, sources_json, author, published_at, image_url
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+          )
+          .bind(
+            ecRow.slug,
+            ecRow.title,
+            excerptText,
+            bodyJson,
+            "rumah-properti",
+            "[]",
+            "[]",
+            "Redaksi AnekaNews",
+            pubAt,
+            ecRow.featured_image || "/images/harga-properti-naik-tren-rumah-hemat-milenial-2026.jpg"
+          )
+          .run();
+
+        row = {
+          slug: ecRow.slug,
+          title: ecRow.title,
+          excerpt: excerptText,
+          body: bodyJson,
+          channel: "rumah-properti",
+          author: "Redaksi AnekaNews",
+          published_at: pubAt,
+          image_url: ecRow.featured_image || undefined,
+          sources_json: "[]",
+        };
+      }
+    } catch (e) {
+      console.error("Fallback ec_posts lookup failed:", e);
+    }
+  }
+
+  if (!row) return getPost(cleanSlug);
 
   const post = rowToPost(row);
 
   try {
     const imagesResult = await db
       .prepare(
-        `SELECT image_url, alt_text FROM article_images WHERE slug = ? ORDER BY position ASC`
+        `SELECT image_url, alt_text FROM article_images WHERE LOWER(slug) = LOWER(?) ORDER BY position ASC`
       )
-      .bind(slug)
+      .bind(post.slug)
       .all<{ image_url: string; alt_text: string | null }>();
     if (imagesResult.results && imagesResult.results.length > 0) {
       post.images = imagesResult.results;

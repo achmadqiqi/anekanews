@@ -13,13 +13,17 @@ const formattedDate = new Date(post.publishedAt).toLocaleDateString("id-ID", {
   month: "short",
   year: "numeric",
 });
+const webpUrl = post.image_url ? post.image_url.replace(/\.(jpg|jpeg|png)$/i, ".webp") : "";
 ---
 
 {variant === "bento-main" && (
   <article class="card-bento-main">
     <a href={`/artikel/${post.slug}`} class="bento-visual-link">
       {post.image_url ? (
-        <img src={post.image_url} alt={post.title} loading="eager" fetchpriority="high" class="bento-img" />
+        <picture>
+          <source srcset={webpUrl} type="image/webp" />
+          <img src={post.image_url} alt={post.title} loading="eager" fetchpriority="high" decoding="async" class="bento-img" />
+        </picture>
       ) : (
         <div class="bento-placeholder-visual"><span>{post.channel}</span></div>
       )}
@@ -43,7 +47,10 @@ const formattedDate = new Date(post.publishedAt).toLocaleDateString("id-ID", {
   <article class="card-bento-side">
     <a href={`/artikel/${post.slug}`} class="side-thumb-link">
       {post.image_url ? (
-        <img src={post.image_url} alt={post.title} loading="lazy" class="side-thumb-img" />
+        <picture>
+          <source srcset={webpUrl} type="image/webp" />
+          <img src={post.image_url} alt={post.title} loading="lazy" decoding="async" class="side-thumb-img" />
+        </picture>
       ) : (
         <div class="side-placeholder-thumb"><span>{post.channel}</span></div>
       )}
@@ -62,7 +69,10 @@ const formattedDate = new Date(post.publishedAt).toLocaleDateString("id-ID", {
   <article class="card-horizontal">
     <a href={`/artikel/${post.slug}`} class="horiz-thumb-link">
       {post.image_url ? (
-        <img src={post.image_url} alt={post.title} loading="lazy" class="horiz-img" />
+        <picture>
+          <source srcset={webpUrl} type="image/webp" />
+          <img src={post.image_url} alt={post.title} loading="lazy" decoding="async" class="horiz-img" />
+        </picture>
       ) : (
         <div class="horiz-placeholder"><span>{post.channel}</span></div>
       )}
@@ -82,7 +92,10 @@ const formattedDate = new Date(post.publishedAt).toLocaleDateString("id-ID", {
   <article class="card-grid-item">
     <a href={`/artikel/${post.slug}`} class="grid-thumb-link">
       {post.image_url ? (
-        <img src={post.image_url} alt={post.title} loading="lazy" class="grid-img" />
+        <picture>
+          <source srcset={webpUrl} type="image/webp" />
+          <img src={post.image_url} alt={post.title} loading="lazy" decoding="async" class="grid-img" />
+        </picture>
       ) : (
         <div class="grid-placeholder"><span>{post.channel}</span></div>
       )}
