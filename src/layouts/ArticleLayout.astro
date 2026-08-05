@@ -296,6 +296,51 @@ const webpHeroUrl = post.image_url ? post.image_url.replace(/\.(jpg|jpeg|png)$/i
     color: var(--color-primary);
   }
 
+  /* Center All Images, Figures and Captions */
+  .article-hero-figure {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  .article-hero-figure figcaption,
+  .hero-caption {
+    text-align: center;
+    width: 100%;
+  }
+  .article-body-content :global(p:has(img)) {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 2rem 0 !important;
+  }
+  .article-body-content :global(img) {
+    display: block;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  }
+  .article-body-content :global(figure) {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    margin: 2rem auto !important;
+    max-width: 100%;
+  }
+  .article-body-content :global(figcaption) {
+    text-align: center;
+    font-size: 0.85rem;
+    color: var(--color-text-muted);
+    margin-top: 0.5rem;
+    font-style: italic;
+  }
+
   /* Primary Sources Box */
   .sources-box {
     background-color: var(--color-surface);
