@@ -79,6 +79,7 @@ export default {
       const isGetOrHead = request.method === "GET" || request.method === "HEAD";
       const url = new URL(request.url);
       const isBypassCache =
+        url.searchParams.has("nocache") ||
         url.pathname.startsWith("/api/") ||
         url.pathname.startsWith("/quick-login") ||
         url.pathname.startsWith("/dev-bypass") ||
