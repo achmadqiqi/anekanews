@@ -236,11 +236,19 @@ const webpHeroUrl = post.image_url ? post.image_url.replace(/\.(jpg|jpeg|png)$/i
     margin: 0 0 2rem;
     border-radius: 8px;
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    background: var(--color-surface);
   }
   .article-hero-img {
-    width: 100%;
-    aspect-ratio: 16 / 9;
-    object-fit: cover;
+    max-width: 100%;
+    max-height: 650px;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    border-radius: 8px;
   }
   .hero-caption {
     font-size: 0.75rem;
@@ -321,7 +329,10 @@ const webpHeroUrl = post.image_url ? post.image_url.replace(/\.(jpg|jpeg|png)$/i
     margin-left: auto !important;
     margin-right: auto !important;
     max-width: 100%;
+    max-height: 650px;
+    width: auto;
     height: auto;
+    object-fit: contain;
     border-radius: 8px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   }
