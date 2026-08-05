@@ -48,7 +48,7 @@ const articleJsonLd = {
       url: "https://anekanews.com/images/logo.png",
     },
   },
-  mainEntityOfPage: new URL(`/artikel/${post.slug}`, Astro.site),
+  mainEntityOfPage: `https://anekanews.com/artikel/${post.slug}`,
 };
 const webpHeroUrl = post.image_url ? post.image_url.replace(/\.(jpg|jpeg|png)$/i, ".webp") : "";
 ---
