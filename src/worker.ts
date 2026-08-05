@@ -71,6 +71,13 @@ export default {
     Reflect.set(request, Symbol.for("astro.locals"), locals);
 
     try {
+      if (env.ASSETS) {
+        const assetRes = await env.ASSETS.fetch(request.clone());
+        if (assetRes.status !== 404) {
+          return assetRes;
+        }
+      }
+
       const state = new FetchState(request);
       const asset = await cf(state, env, ctx);
       if (asset) return asset;
