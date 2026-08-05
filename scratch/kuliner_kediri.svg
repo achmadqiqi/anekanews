@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#7c2d12" />
+      <stop offset="50%" stop-color="#c2410c" />
+      <stop offset="100%" stop-color="#ea580c" />
+    </linearGradient>
+    <filter id="shadow">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#000000" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+
+  <rect width="1200" height="675" fill="url(#bg)" />
+
+  <circle cx="150" cy="120" r="180" fill="#ffffff" fill-opacity="0.04"/>
+  <circle cx="1050" cy="550" r="220" fill="#ffffff" fill-opacity="0.04"/>
+
+  <!-- Tahu Takwa Golden Icons -->
+  <rect x="420" y="160" width="160" height="160" rx="20" fill="#fef08a" stroke="#eab308" stroke-width="8" filter="url(#shadow)" />
+  <rect x="620" y="220" width="160" height="160" rx="20" fill="#fde047" stroke="#ca8a04" stroke-width="8" filter="url(#shadow)" />
+
+  <text x="600" y="470" font-family="Segoe UI, Roboto, Helvetica, sans-serif" font-size="44" font-weight="900" fill="#ffffff" text-anchor="middle" letter-spacing="1">
+    KULINER KHAS KEDIRI
+  </text>
+  <text x="600" y="530" font-family="Segoe UI, Roboto, Helvetica, sans-serif" font-size="26" font-weight="600" fill="#fef08a" text-anchor="middle">
+    Tahu Takwa • Gethuk Pisang • Nasi Goreng Arang
+  </text>
+</svg>
